@@ -189,7 +189,13 @@ def index(context):
     accounts_ids = [model.id for model in accounts_models]
     clans_ids = [model.clan_id for model in accounts_models]
 
-    heroes = dict((model.account_id, heroes_logic.load_hero(hero_model=model)) for model in heroes_models.Hero.objects.filter(account_id__in=accounts_ids))
+    heroes = {
+        model.account_id: heroes_logic.load_hero(hero_model=model)
+        for model in heroes_models.Hero.objects.filter(
+            account_id__in=accounts_ids
+        )
+    }
+
 
     clans = {clan.id: clan for clan in clans_logic.load_clans(clans_ids)}
 
@@ -559,8 +565,13 @@ def api_logout(context):
 @LoginRequiredProcessor()
 @profile_resource('', name='show')
 def profile(context):
-    data = {'email': context.account.email if context.account.email else 'укажите email',
-            'nick': context.account.nick if not context.account.is_fast and context.account.nick else 'укажите ваше имя'}
+    data = {
+        'email': context.account.email or 'укажите email',
+        'nick': context.account.nick
+        if not context.account.is_fast and context.account.nick
+        else 'укажите ваше имя',
+    }
+
 
     edit_profile_form = forms.EditProfileForm(data)
 
@@ -816,15 +827,14 @@ def data_protection_report(context):
         return utils_views.AjaxOk(content={'report': report.data,
                                            'completed_at': report.completed_at.isoformat(),
                                            'expire_at': report.expire_at.isoformat()})
-    else:
-        report.postprocess_records(data_protection.postprocess_record)
+    report.postprocess_records(data_protection.postprocess_record)
 
-        return utils_views.Page('accounts/data_protection_report.html',
-                                content={'resource': context.resource,
-                                         'report': report.data_by_source(),
-                                         'technical_url': technical_url,
-                                         'completed_at': report.completed_at,
-                                         'expire_at': report.expire_at})
+    return utils_views.Page('accounts/data_protection_report.html',
+                            content={'resource': context.resource,
+                                     'report': report.data_by_source(),
+                                     'technical_url': technical_url,
+                                     'completed_at': report.completed_at,
+                                     'expire_at': report.expire_at})
 
 
 @tt_api_views.RequestProcessor(request_class=tt_protocol_data_protector_pb2.PluginReportRequest)

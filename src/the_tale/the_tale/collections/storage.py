@@ -33,11 +33,12 @@ class ItemsStorage(utils_storage.PrototypeStorage):
         choices = []
 
         for kit in kits.all():
-            items = []
+            items = [
+                (item.id, item.caption)
+                for item in self.all()
+                if item.kit_id == kit.id
+            ]
 
-            for item in self.all():
-                if item.kit_id == kit.id:
-                    items.append((item.id, item.caption))
 
             choices.append((kit.caption, sorted(items, key=lambda record: record[1])))
 

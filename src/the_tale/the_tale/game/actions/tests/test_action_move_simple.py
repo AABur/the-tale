@@ -1634,8 +1634,13 @@ class ComplexClanTeleportationTests(clans_helpers.ClansTestsMixin,
             self.storage.process_turn(continue_steps_if_needed=False)
 
         self.assertEqual(self.hero.position.place_id, self.place_3.id)
-        self.assertEqual(sum(1 for message in self.hero.journal.messages
-                             if message.key.is_ACTION_MOVE_SIMPLE_TO_TELEPORT_WITH_CLAN), 1)
+        self.assertEqual(
+            sum(
+                bool(message.key.is_ACTION_MOVE_SIMPLE_TO_TELEPORT_WITH_CLAN)
+                for message in self.hero.journal.messages
+            ),
+            1,
+        )
 
     def test_teleport_from_start(self):
 
@@ -1660,8 +1665,13 @@ class ComplexClanTeleportationTests(clans_helpers.ClansTestsMixin,
             self.storage.process_turn(continue_steps_if_needed=False)
 
         self.assertEqual(self.hero.position.place_id, self.place_3.id)
-        self.assertEqual(sum(1 for message in self.hero.journal.messages
-                             if message.key.is_ACTION_MOVE_SIMPLE_TO_TELEPORT_WITH_CLAN), 1)
+        self.assertEqual(
+            sum(
+                bool(message.key.is_ACTION_MOVE_SIMPLE_TO_TELEPORT_WITH_CLAN)
+                for message in self.hero.journal.messages
+            ),
+            1,
+        )
 
     def test_teleport_from_end(self):
         clan = self.prepair_clan()

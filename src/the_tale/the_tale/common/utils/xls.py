@@ -129,12 +129,13 @@ def load_table_for_enums(filename, rows_enum, columns_enum, sheet_index=0, encod
                       columns=columns_values,
                       data_type=data_type)
 
-    result = dict((row_id,
-                   dict((columns_dict[column_str], column_value)
-                        for column_str, column_value in data[row_str].items()))
-                  for row_id, row_str in rows_items)
-
-    return result
+    return {
+        row_id: {
+            columns_dict[column_str]: column_value
+            for column_str, column_value in data[row_str].items()
+        }
+        for row_id, row_str in rows_items
+    }
 
 
 def load_table_for_enums_subsets(filename, rows, columns, sheet_index=0, encoding='utf-8', data_type=lambda x: x):
@@ -150,9 +151,10 @@ def load_table_for_enums_subsets(filename, rows, columns, sheet_index=0, encodin
                       columns=columns_values,
                       data_type=data_type)
 
-    result = dict((row_id,
-                   dict((columns_dict[column_str], column_value)
-                        for column_str, column_value in data[row_str].items()))
-                  for row_id, row_str in rows_items)
-
-    return result
+    return {
+        row_id: {
+            columns_dict[column_str]: column_value
+            for column_str, column_value in data[row_str].items()
+        }
+        for row_id, row_str in rows_items
+    }

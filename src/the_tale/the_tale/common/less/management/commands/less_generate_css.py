@@ -57,8 +57,6 @@ class Command(utilities_base.Command):
 
                 dest_file = dest_file[:-5] + '.css'
 
-                f = open(dest_file, 'w')
-                (out, err) = subprocess.Popen(["lessc", src_file], stdout=f).communicate()
-                f.close()
-
+                with open(dest_file, 'w') as f:
+                    (out, err) = subprocess.Popen(["lessc", src_file], stdout=f).communicate()
         self.logger.info('all files processed')

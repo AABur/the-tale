@@ -34,37 +34,45 @@ class CollectDataTests(helpers.BankTestsMixin,
         data_protection.remove_data(self.other_account_2_id)
 
     def prepair_data(self):
-        invoices = [self.create_invoice(1,
-                                        recipient_type=relations.ENTITY_TYPE.GAME_ACCOUNT,
-                                        recipient_id=self.target_account_id,
-                                        sender_type=relations.ENTITY_TYPE.GAME_LOGIC,
-                                        sender_id=self.other_account_1_id),
-                    self.create_invoice(2,
-                                        recipient_type=relations.ENTITY_TYPE.GAME_LOGIC,
-                                        recipient_id=self.target_account_id,
-                                        sender_type=relations.ENTITY_TYPE.GAME_ACCOUNT,
-                                        sender_id=self.other_account_1_id),
-
-                    self.create_invoice(3,
-                                        recipient_type=relations.ENTITY_TYPE.GAME_ACCOUNT,
-                                        recipient_id=self.target_account_id,
-                                        sender_type=relations.ENTITY_TYPE.GAME_ACCOUNT,
-                                        sender_id=self.other_account_1_id,
-                                        state=relations.INVOICE_STATE.random(),
-                                        operation_uid='transfer-money-between-accounts-transfer'),
-                    self.create_invoice(4,
-                                        recipient_type=relations.ENTITY_TYPE.GAME_LOGIC,
-                                        recipient_id=self.other_account_1_id,
-                                        sender_type=relations.ENTITY_TYPE.GAME_ACCOUNT,
-                                        sender_id=self.target_account_id),
-
-                    self.create_invoice(5,
-                                        recipient_type=relations.ENTITY_TYPE.GAME_ACCOUNT,
-                                        recipient_id=self.other_account_2_id,
-                                        sender_type=relations.ENTITY_TYPE.GAME_LOGIC,
-                                        sender_id=self.other_account_1_id)]
-
-        return invoices
+        return [
+            self.create_invoice(
+                1,
+                recipient_type=relations.ENTITY_TYPE.GAME_ACCOUNT,
+                recipient_id=self.target_account_id,
+                sender_type=relations.ENTITY_TYPE.GAME_LOGIC,
+                sender_id=self.other_account_1_id,
+            ),
+            self.create_invoice(
+                2,
+                recipient_type=relations.ENTITY_TYPE.GAME_LOGIC,
+                recipient_id=self.target_account_id,
+                sender_type=relations.ENTITY_TYPE.GAME_ACCOUNT,
+                sender_id=self.other_account_1_id,
+            ),
+            self.create_invoice(
+                3,
+                recipient_type=relations.ENTITY_TYPE.GAME_ACCOUNT,
+                recipient_id=self.target_account_id,
+                sender_type=relations.ENTITY_TYPE.GAME_ACCOUNT,
+                sender_id=self.other_account_1_id,
+                state=relations.INVOICE_STATE.random(),
+                operation_uid='transfer-money-between-accounts-transfer',
+            ),
+            self.create_invoice(
+                4,
+                recipient_type=relations.ENTITY_TYPE.GAME_LOGIC,
+                recipient_id=self.other_account_1_id,
+                sender_type=relations.ENTITY_TYPE.GAME_ACCOUNT,
+                sender_id=self.target_account_id,
+            ),
+            self.create_invoice(
+                5,
+                recipient_type=relations.ENTITY_TYPE.GAME_ACCOUNT,
+                recipient_id=self.other_account_2_id,
+                sender_type=relations.ENTITY_TYPE.GAME_LOGIC,
+                sender_id=self.other_account_1_id,
+            ),
+        ]
 
     def expected_data(self, invoices):
         return [('game_invoice', {'amount': 10001,

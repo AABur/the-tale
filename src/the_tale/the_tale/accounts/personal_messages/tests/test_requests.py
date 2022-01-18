@@ -59,9 +59,10 @@ class IndexRequestsTests(BaseRequestsTests):
         for i in range(conf.settings.MESSAGES_ON_PAGE):
             logic.send_message(self.account_2.id, [self.account_1.id], 'test message_2_1 %d' % i)
 
-        texts = []
-        for i in range(conf.settings.MESSAGES_ON_PAGE):
-            texts.append(('test message_2_1 %d' % i, 1))
+        texts = [
+            ('test message_2_1 %d' % i, 1)
+            for i in range(conf.settings.MESSAGES_ON_PAGE)
+        ]
 
         self.request_login(self.account_1.email)
         self.check_html_ok(self.request_html(utils_urls.url('accounts:messages:')), texts=texts)

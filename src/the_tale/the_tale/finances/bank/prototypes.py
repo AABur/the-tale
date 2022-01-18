@@ -86,7 +86,10 @@ class AccountPrototype(utils_prototypes.BasePrototype):
 
         frozen_outcoming = frozen_outcoming_query.aggregate(frozen_amount=django_models.Sum('amount'))['frozen_amount']
 
-        return self.amount + (frozen_incoming if frozen_incoming else 0) - (frozen_outcoming if frozen_outcoming else 0) >= test_amount
+        return (
+            self.amount + (frozen_incoming or 0) - (frozen_outcoming or 0)
+            >= test_amount
+        )
 
     def get_history_list(self):
         condition = django_models.Q(recipient_type=self.entity_type,
@@ -116,8 +119,8 @@ class AccountPrototype(utils_prototypes.BasePrototype):
             outcoming_query = outcoming_query.filter(sender_id__in=accounts_ids)
         outcoming_amount = outcoming_query.aggregate(total_amount=django_models.Sum('amount')).get('total_amount')
 
-        amount = (incoming_amount if incoming_amount else 0) - (outcoming_amount if outcoming_amount else 0)
-        return amount if amount else 0
+        amount = (incoming_amount or 0) - (outcoming_amount or 0)
+        return amount or 0
 
     @classmethod
     def _money_spent(cls, from_type, currency=relations.CURRENCY_TYPE.PREMIUM):
@@ -136,8 +139,8 @@ class AccountPrototype(utils_prototypes.BasePrototype):
 
         outcoming_amount = outcoming_query.aggregate(total_amount=django_models.Sum('amount')).get('total_amount')
 
-        amount = (incoming_amount if incoming_amount else 0) - (outcoming_amount if outcoming_amount else 0)
-        return amount if amount else 0
+        amount = (incoming_amount or 0) - (outcoming_amount or 0)
+        return amount or 0
 
     def save(self):
         self._model.save()

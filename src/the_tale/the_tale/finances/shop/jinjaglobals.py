@@ -65,13 +65,13 @@ def xsolla_paystaion_widget_link(account):
     if conf.settings.XSOLLA_PID is not None:
         attributes['pid'] = conf.settings.XSOLLA_PID
 
-    link = url_builder(**attributes)
-
-    return link
+    return url_builder(**attributes)
 
 
 @utils_jinja2.jinjaglobal
 def market_statistics():
-    statistics = tt_services.market.cmd_statistics(time_from=datetime.datetime.utcnow() - datetime.timedelta(seconds=conf.settings.MARKET_STATISTICS_PERIOD),
-                                                   time_till=datetime.datetime.utcnow() + datetime.timedelta(days=1))
-    return statistics
+    return tt_services.market.cmd_statistics(
+        time_from=datetime.datetime.utcnow()
+        - datetime.timedelta(seconds=conf.settings.MARKET_STATISTICS_PERIOD),
+        time_till=datetime.datetime.utcnow() + datetime.timedelta(days=1),
+    )

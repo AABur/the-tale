@@ -19,8 +19,16 @@ class AchievementPrototypeTests(utils_testcase.TestCase, personal_messages_helpe
         personal_messages_tt_services.personal_messages.cmd_debug_clear_service()
 
     def test_create(self):
-        self.assertEqual(set((a.id for a in storage.achievements.all())),
-                         set((self.achievement_1.id, self.achievement_2.id, self.achievement_3.id)))
+        self.assertEqual(
+            {a.id for a in storage.achievements.all()},
+            set(
+                (
+                    self.achievement_1.id,
+                    self.achievement_2.id,
+                    self.achievement_3.id,
+                )
+            ),
+        )
 
     def test_save(self):
         with self.check_changed(lambda: storage.achievements._version):

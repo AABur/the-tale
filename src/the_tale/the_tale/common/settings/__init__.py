@@ -77,9 +77,7 @@ class Settings(object):
         return key in self.data
 
     def get(self, key, default=None):
-        if key in self:
-            return self[key]
-        return default
+        return self[key] if key in self else default
 
     def clear(self):
         from . import models

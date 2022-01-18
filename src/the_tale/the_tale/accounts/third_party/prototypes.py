@@ -35,10 +35,8 @@ class AccessTokenPrototype(utils_prototypes.BasePrototype):
 
     @classmethod
     def fast_create(cls, id, account=None, state=relations.ACCESS_TOKEN_STATE.UNPROCESSED):
-        token = cls.create(application_name='app-name-%d' % id,
+        return cls.create(application_name='app-name-%d' % id,
                            application_info='app-info-%d' % id,
                            application_description='app-descr-%d' % id,
                            account=account,
                            state=state)
-
-        return token

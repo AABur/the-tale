@@ -126,11 +126,32 @@ class LogicTests(utils_testcase.TestCase):
         logic.create_relation(meta_relations.TestRelation_1, meta_relations.TestType_2(8), meta_relations.TestType_1(1))
         logic.create_relation(meta_relations.TestRelation_2, meta_relations.TestType_1(6), meta_relations.TestType_1(4))
 
-        self.assertEqual(set((relation.id, obj.id) for relation, obj in logic.get_objects_related_from(meta_relations.TestType_1(6))),
-                         set(((meta_relations.TestRelation_1.id, 7), (meta_relations.TestRelation_2.id, 4))))
+        self.assertEqual(
+            {
+                (relation.id, obj.id)
+                for relation, obj in logic.get_objects_related_from(
+                    meta_relations.TestType_1(6)
+                )
+            },
+            set(
+                (
+                    (meta_relations.TestRelation_1.id, 7),
+                    (meta_relations.TestRelation_2.id, 4),
+                )
+            ),
+        )
 
-        self.assertEqual(set((relation.id, obj.id) for relation, obj in logic.get_objects_related_from(meta_relations.TestType_1(6), relation=meta_relations.TestRelation_2)),
-                         set(((meta_relations.TestRelation_2.id, 4),)))
+
+        self.assertEqual(
+            {
+                (relation.id, obj.id)
+                for relation, obj in logic.get_objects_related_from(
+                    meta_relations.TestType_1(6),
+                    relation=meta_relations.TestRelation_2,
+                )
+            },
+            set(((meta_relations.TestRelation_2.id, 4),)),
+        )
 
     def test_get_uids_related_from(self):
         logic.create_relation(meta_relations.TestRelation_1, meta_relations.TestType_1(6), meta_relations.TestType_2(7))
@@ -148,11 +169,32 @@ class LogicTests(utils_testcase.TestCase):
         logic.create_relation(meta_relations.TestRelation_1, meta_relations.TestType_1(1), meta_relations.TestType_2(8))
         logic.create_relation(meta_relations.TestRelation_2, meta_relations.TestType_1(4), meta_relations.TestType_1(6))
 
-        self.assertEqual(set((relation.id, obj.id) for relation, obj in logic.get_objects_related_to(meta_relations.TestType_1(6))),
-                         set(((meta_relations.TestRelation_1.id, 7), (meta_relations.TestRelation_2.id, 4))))
+        self.assertEqual(
+            {
+                (relation.id, obj.id)
+                for relation, obj in logic.get_objects_related_to(
+                    meta_relations.TestType_1(6)
+                )
+            },
+            set(
+                (
+                    (meta_relations.TestRelation_1.id, 7),
+                    (meta_relations.TestRelation_2.id, 4),
+                )
+            ),
+        )
 
-        self.assertEqual(set((relation.id, obj.id) for relation, obj in logic.get_objects_related_to(meta_relations.TestType_1(6), relation=meta_relations.TestRelation_2)),
-                         set(((meta_relations.TestRelation_2.id, 4),)))
+
+        self.assertEqual(
+            {
+                (relation.id, obj.id)
+                for relation, obj in logic.get_objects_related_to(
+                    meta_relations.TestType_1(6),
+                    relation=meta_relations.TestRelation_2,
+                )
+            },
+            set(((meta_relations.TestRelation_2.id, 4),)),
+        )
 
     def test_get_uids_related_to(self):
         logic.create_relation(meta_relations.TestRelation_1, meta_relations.TestType_2(7), meta_relations.TestType_1(6))

@@ -100,7 +100,7 @@ class BattlePvE1x1ActionTest(utils_testcase.TestCase):
         self.storage._test_save()
 
     def fill_bag(self, power):
-        for i in range(self.hero.max_bag_size):
+        for _ in range(self.hero.max_bag_size):
             artifact = artifacts_storage.artifacts.generate_artifact_from_list(artifacts_storage.artifacts.artifacts, 1,
                                                                                rarity=artifacts_relations.RARITY.NORMAL)
             artifact.power = power
@@ -398,7 +398,7 @@ class BattlePvE1x1ActionTest(utils_testcase.TestCase):
 
         artifact.integrity = artifact.max_integrity
 
-        for i in range(100):
+        for _ in range(100):
             self.action_battle.process_artifact_breaking()
 
         self.assertEqual(artifact.power, power.Power(100, 100))

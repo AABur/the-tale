@@ -436,19 +436,18 @@ class TestFeedRequests(BaseTestRequests):
         prototypes.PostPrototype.create(thread2_2, self.account, 'post7-text')
         prototypes.PostPrototype.create(thread2_2, self.account, 'post8-text')
 
-        texts = [('thread1-caption', 1),
-                 ('thread1-text', 1),
+        texts = [
+            ('thread1-caption', 1),
+            ('thread1-text', 1),
+            ('thread2-caption', 0),
+            ('thread2-text', 0),
+            ('thread3-caption', 1),
+            ('thread3-text', 1),
+            ('thread2_2-caption', 0),
+            ('thread2_2-text', 0),
+            *[('post%d-text' % i, 0) for i in range(9)],
+        ]
 
-                 ('thread2-caption', 0),  # not pass throught time limit
-                 ('thread2-text', 0),
-
-                 ('thread3-caption', 1),
-                 ('thread3-text', 1),
-
-                 ('thread2_2-caption', 0),
-                 ('thread2_2-text', 0)]
-
-        texts.extend([('post%d-text' % i, 0) for i in range(0, 9)])
 
         self.check_html_ok(self.request_html(utils_urls.url('forum:feed')), texts=texts, content_type='application/atom+xml')
 

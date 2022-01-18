@@ -68,12 +68,20 @@ class BattleContext(object):
         self.last_chance_probability = max(probability, self.last_chance_probability)
 
     def use_damage_queue_fire(self, damage_queue):
-        self.damage_queue_fire = [(delta if delta else power.Damage(0, 0)) + (queue if queue else power.Damage(0, 0))
-                                  for queue, delta in itertools.zip_longest(self.damage_queue_fire, [None] + damage_queue)]
+        self.damage_queue_fire = [
+            (delta or power.Damage(0, 0)) + (queue or power.Damage(0, 0))
+            for queue, delta in itertools.zip_longest(
+                self.damage_queue_fire, [None] + damage_queue
+            )
+        ]
 
     def use_damage_queue_poison(self, damage_queue):
-        self.damage_queue_poison = [(delta if delta else power.Damage(0, 0)) + (queue if queue else power.Damage(0, 0))
-                                    for queue, delta in itertools.zip_longest(self.damage_queue_poison, [None] + damage_queue)]
+        self.damage_queue_poison = [
+            (delta or power.Damage(0, 0)) + (queue or power.Damage(0, 0))
+            for queue, delta in itertools.zip_longest(
+                self.damage_queue_poison, [None] + damage_queue
+            )
+        ]
 
     def use_initiative(self, initiative_queue):
         # do not prefix [None] here, since initiative getted before on_every_turn

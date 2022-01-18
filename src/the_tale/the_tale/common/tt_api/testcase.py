@@ -14,8 +14,10 @@ class TestCaseMixin(object):
         return answer_type.FromString(response.content)
 
     def post_protobuf(self, url, data=None):
-        return self.client.post(url,
-                                data if data else '',
-                                HTTP_ACCEPT='text/json',
-                                HTTP_X_REQUESTED_WITH='XMLHttpRequest',
-                                content_type='application/protobuf')
+        return self.client.post(
+            url,
+            data or '',
+            HTTP_ACCEPT='text/json',
+            HTTP_X_REQUESTED_WITH='XMLHttpRequest',
+            content_type='application/protobuf',
+        )

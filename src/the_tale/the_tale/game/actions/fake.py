@@ -12,7 +12,7 @@ class FakeActor(object):
         self.max_health = max_health
         self.health = max_health
         self.level = level
-        self.context = context if context else actions_contexts_battle.BattleContext()
+        self.context = context or actions_contexts_battle.BattleContext()
         self.mob_type = mob_type
         self.bag = bag
 

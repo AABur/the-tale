@@ -47,11 +47,7 @@ def value(module, variable=None):
     if key not in value._values:
         module = importlib.import_module(module)
 
-        if variable is None:
-            value._values[key] = module
-        else:
-            value._values[key] = getattr(module, variable)
-
+        value._values[key] = module if variable is None else getattr(module, variable)
     return value._values[key]
 
 

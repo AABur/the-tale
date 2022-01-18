@@ -130,9 +130,9 @@ class CanBeInvitedProcessor(utils_views.FlaggedAccessProcessor):
     ARGUMENT = 'target_account'
 
     def validate(self, argument):
-        accept_invites_from_clans = accounts_tt_services.players_properties.cmd_get_object_property(object_id=argument.id,
-                                                                                                    name='accept_invites_from_clans')
-        return accept_invites_from_clans
+        return accounts_tt_services.players_properties.cmd_get_object_property(
+            object_id=argument.id, name='accept_invites_from_clans'
+        )
 
 
 class CanReceiveRequessProcessor(utils_views.FlaggedAccessProcessor):
@@ -141,9 +141,9 @@ class CanReceiveRequessProcessor(utils_views.FlaggedAccessProcessor):
     ARGUMENT = 'current_clan'
 
     def validate(self, argument):
-        accept_requests_from_players = tt_services.properties.cmd_get_object_property(object_id=argument.id,
-                                                                                      name='accept_requests_from_players')
-        return accept_requests_from_players
+        return tt_services.properties.cmd_get_object_property(
+            object_id=argument.id, name='accept_requests_from_players'
+        )
 
 
 class ClanIsActiveProcessor(utils_views.FlaggedAccessProcessor):

@@ -189,12 +189,12 @@ class AccountPrototype(utils_prototypes.BasePrototype):
 
     @utils_decorators.lazy_property
     def bank_account(self):
-        bank_account = bank_prototypes.AccountPrototype.get_for(entity_type=bank_relations.ENTITY_TYPE.GAME_ACCOUNT,
-                                                                entity_id=self.id,
-                                                                currency=bank_relations.CURRENCY_TYPE.PREMIUM,
-                                                                null_object=True)
-
-        return bank_account
+        return bank_prototypes.AccountPrototype.get_for(
+            entity_type=bank_relations.ENTITY_TYPE.GAME_ACCOUNT,
+            entity_id=self.id,
+            currency=bank_relations.CURRENCY_TYPE.PREMIUM,
+            null_object=True,
+        )
 
     def set_clan_id(self, clan_id):
         models.Account.objects.filter(id=self.id).update(clan=clan_id)

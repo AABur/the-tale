@@ -175,14 +175,37 @@ class ThreadPrototypeTests(utils_testcase.TestCase):
 
         restricted_thread = prototypes.ThreadPrototype.create(restricted_subcategory, 'thread-restricted-caption', self.account, 'thread-text')
 
-        self.assertEqual(set(t.id for t in prototypes.ThreadPrototype.get_last_threads(account=None, limit=3)),
-                         set([self.thread.id]))
+        self.assertEqual(
+            {
+                t.id
+                for t in prototypes.ThreadPrototype.get_last_threads(
+                    account=None, limit=3
+                )
+            },
+            set([self.thread.id]),
+        )
 
-        self.assertEqual(set(t.id for t in prototypes.ThreadPrototype.get_last_threads(account=granted_account, limit=3)),
-                         set([self.thread.id, restricted_thread.id]))
 
-        self.assertEqual(set(t.id for t in prototypes.ThreadPrototype.get_last_threads(account=wrong_account, limit=3)),
-                         set([self.thread.id]))
+        self.assertEqual(
+            {
+                t.id
+                for t in prototypes.ThreadPrototype.get_last_threads(
+                    account=granted_account, limit=3
+                )
+            },
+            set([self.thread.id, restricted_thread.id]),
+        )
+
+
+        self.assertEqual(
+            {
+                t.id
+                for t in prototypes.ThreadPrototype.get_last_threads(
+                    account=wrong_account, limit=3
+                )
+            },
+            set([self.thread.id]),
+        )
 
     def test_update_subcategory_on_delete(self):
         with mock.patch('the_tale.forum.prototypes.SubCategoryPrototype.update') as subcategory_update:
@@ -328,7 +351,7 @@ class PostPrototypeTests(utils_testcase.TestCase):
         self.assertTrue(delay_1 - delay_2 > 1)
 
     def test_get_new_post_delay__a_lot_of_posts(self):
-        for i in range(100):
+        for _ in range(100):
             prototypes.PostPrototype.create(thread=self.thread, author=self.account, text='post-1-text')
 
         self.assertTrue(prototypes.PostPrototype.get_new_post_delay(self.account) < conf.settings.POST_DELAY)
@@ -542,8 +565,10 @@ class SubscriptionPrototypeTests(utils_testcase.TestCase):
         prototypes.SubscriptionPrototype.remove_all_in_subcategory(account_id=self.account.id, subcategory_id=self.subcategory_1.id)
 
         self.assertEqual(prototypes.SubscriptionPrototype._db_count(), 4)
-        self.assertEqual(set(s.id for s in prototypes.SubscriptionPrototype._db_all()),
-                         set((subscr_2.id, subscr_5.id, subscr_6.id, subscr_7.id)))
+        self.assertEqual(
+            {s.id for s in prototypes.SubscriptionPrototype._db_all()},
+            set((subscr_2.id, subscr_5.id, subscr_6.id, subscr_7.id)),
+        )
 
 
 class PermissionPrototypeTests(utils_testcase.TestCase):

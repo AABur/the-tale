@@ -78,7 +78,15 @@ class FriendshipPrototypeTests(utils_testcase.TestCase, personal_messages_helper
     def test_get_friends_for__friends_exists(self):
         prototypes.FriendshipPrototype.request_friendship(self.account_1, self.account_2, 'text 1')._confirm()
         prototypes.FriendshipPrototype.request_friendship(self.account_3, self.account_1, 'text 2')._confirm()
-        self.assertEqual(set(account.id for account in prototypes.FriendshipPrototype.get_friends_for(self.account_1)), set([self.account_2.id, self.account_3.id]))
+        self.assertEqual(
+            {
+                account.id
+                for account in prototypes.FriendshipPrototype.get_friends_for(
+                    self.account_1
+                )
+            },
+            set([self.account_2.id, self.account_3.id]),
+        )
 
     def test_get_candidates_for__no_friendship(self):
         self.assertEqual(prototypes.FriendshipPrototype.get_candidates_for(self.account_1), [])

@@ -12,10 +12,7 @@ def random_value_by_priority(values):
     if isinstance(values, types.GeneratorType):
         values = tuple(values)
 
-    domain = 0
-
-    for value, priority in values:
-        domain += priority
+    domain = sum(priority for value, priority in values)
 
     choice_value = random.uniform(0, domain)
 
@@ -42,9 +39,7 @@ def shuffle_values_by_priority(values):
 
 
 def randint_from_1(value):
-    if value < 1:
-        return 0
-    return random.randint(1, 2 * value - 1)
+    return 0 if value < 1 else random.randint(1, 2 * value - 1)
 
 
 def pluralize_word(real_number, word_1, word_2_4, word_other):
@@ -67,8 +62,8 @@ def verbose_timedelta(value):
         return pluralize_word(value.days, 'день', 'дня', 'дней')
 
     elif value.days == 0:
-        if value.seconds >= 60 * 60:
-            return pluralize_word(value.seconds // (60 * 60), 'час', 'часа', 'часов')
+        if value.seconds >= 60 ** 2:
+            return pluralize_word(value.seconds // 60**2, 'час', 'часа', 'часов')
 
         if value.seconds >= 60:
             return pluralize_word(value.seconds // 60, 'минута', 'минуты', 'минут')
@@ -164,9 +159,7 @@ def distribute_values_on_interval(number, min, max):
 
 
 def up_first(value):
-    if value:
-        return value[0].upper() + value[1:]
-    return value
+    return value[0].upper() + value[1:] if value else value
 
 
 def run_django_command(command):

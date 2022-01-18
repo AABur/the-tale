@@ -39,9 +39,10 @@ DATABASES = {
         'PASSWORD': 'the_tale',
         'HOST': 'core_postgresql',
         'PORT': '',
-        'CONN_MAX_AGE': 60 * 60  # close connection after an hour
+        'CONN_MAX_AGE': 60 ** 2,
     }
 }
+
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 

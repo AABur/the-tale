@@ -383,17 +383,16 @@ class ActionIdlenessPrototype(ActionBase):
 
     @classmethod
     def _create(cls, hero=None, bundle_id=None):
-        if hero.actions.has_actions:
-            return cls(hero=hero,
-                       bundle_id=bundle_id,
-                       state=cls.STATE.WAITING)
-        else:
-            return cls(hero=hero,
-                       bundle_id=bundle_id,
-                       percents=1.0,
-                       state=cls.STATE.BEFORE_FIRST_STEPS)
-
-        return True
+        return (
+            cls(hero=hero, bundle_id=bundle_id, state=cls.STATE.WAITING)
+            if hero.actions.has_actions
+            else cls(
+                hero=hero,
+                bundle_id=bundle_id,
+                percents=1.0,
+                state=cls.STATE.BEFORE_FIRST_STEPS,
+            )
+        )
 
     def preprocess(self):
         if not self.hero.is_alive:
@@ -512,9 +511,8 @@ class ActionIdlenessPrototype(ActionBase):
                 ActionReligionCeremonyPrototype.create(hero=self.hero)
                 self.state = self.STATE.RELIGION_CEREMONY
 
-            else:
-                if random.uniform(0, 1) < 1.0 / c.TURNS_TO_IDLE / 2:  # 1 фраза на два уровня героя
-                    self.hero.add_message('action_idleness_waiting', hero=self.hero)
+            elif random.uniform(0, 1) < 1.0 / c.TURNS_TO_IDLE / 2:  # 1 фраза на два уровня героя
+                self.hero.add_message('action_idleness_waiting', hero=self.hero)
 
     def force_quest_action(self, quest_kwargs):
         self.state = self.STATE.QUEST
@@ -802,26 +800,27 @@ class ActionBattlePvE1x1Prototype(ActionBase):
 
     def process(self):
 
-        if self.state == self.STATE.BATTLE_RUNNING:
+        if self.state != self.STATE.BATTLE_RUNNING:
 
-            # make turn only if mob still alive (it can be killed by angel)
-            if self.mob.health > 0:
-                battle.make_turn(battle.Actor(self.hero, self.context),
-                                 battle.Actor(self.mob, self.mob_context),
-                                 self.hero)
-                self.percents = 1.0 - self.mob.health_percents
+            return
+        # make turn only if mob still alive (it can be killed by angel)
+        if self.mob.health > 0:
+            battle.make_turn(battle.Actor(self.hero, self.context),
+                             battle.Actor(self.mob, self.mob_context),
+                             self.hero)
+            self.percents = 1.0 - self.mob.health_percents
 
-            if self.hero.health <= 0:
-                if self.mob.health <= 0:
-                    self.on_both_killed()
-                else:
-                    self.on_hero_killed()
+        if self.hero.health <= 0:
+            if self.mob.health <= 0:
+                self.on_both_killed()
+            else:
+                self.on_hero_killed()
 
-            elif self.mob.health <= 0:
-                self.on_mob_killed()
+        elif self.mob.health <= 0:
+            self.on_mob_killed()
 
-            if self.state == self.STATE.PROCESSED:
-                self.process_artifact_breaking()
+        if self.state == self.STATE.PROCESSED:
+            self.process_artifact_breaking()
 
 
 class ActionResurrectPrototype(ActionBase):
@@ -842,22 +841,23 @@ class ActionResurrectPrototype(ActionBase):
 
     def process(self):
 
-        if self.state == self.STATE.RESURRECT:
+        if self.state != self.STATE.RESURRECT:
 
-            if self.hero.is_alive:
-                self.percents = 1.0
-                self.state = self.STATE.PROCESSED
-                return
+            return
+        if self.hero.is_alive:
+            self.percents = 1.0
+            self.state = self.STATE.PROCESSED
+            return
 
-            self.percents += 1.0 / self.hero.resurrect_length
+        self.percents += 1.0 / self.hero.resurrect_length
 
-            if random.uniform(0, 1) < 1.0 / c.TURNS_TO_RESURRECT / 2:  # 1 фраза на два уровня героя
-                self.hero.add_message('action_resurrect_resurrecting', hero=self.hero)
+        if random.uniform(0, 1) < 1.0 / c.TURNS_TO_RESURRECT / 2:  # 1 фраза на два уровня героя
+            self.hero.add_message('action_resurrect_resurrecting', hero=self.hero)
 
-            if self.percents >= 1:
-                self.hero.resurrect()
-                self.state = self.STATE.PROCESSED
-                self.hero.add_message('action_resurrect_finish', hero=self.hero)
+        if self.percents >= 1:
+            self.hero.resurrect()
+            self.state = self.STATE.PROCESSED
+            self.hero.add_message('action_resurrect_finish', hero=self.hero)
 
 
 class ActionFirstStepsPrototype(ActionBase):
@@ -924,11 +924,13 @@ class ActionInPlacePrototype(ActionBase):
                         bundle_id=bundle_id,
                         state=cls.STATE.SPEND_MONEY)
 
-        if hero.companion and hero.position.moved_out_place:
-            # спутники, покидающие героя, должны уходить до входа в город
-            if random.random() < hero.companion_leave_in_place_probability:
-                hero.add_message('companions_left', diary=True, companion_owner=hero, companion=hero.companion)
-                hero.remove_companion()
+        if (
+            hero.companion
+            and hero.position.moved_out_place
+            and random.random() < hero.companion_leave_in_place_probability
+        ):
+            hero.add_message('companions_left', diary=True, companion_owner=hero, companion=hero.companion)
+            hero.remove_companion()
 
         if hero.health < hero.max_health and random.random() < hero.position.place.attrs.hero_regen_chance:
             hero.health = hero.max_health
@@ -1058,15 +1060,15 @@ class ActionInPlacePrototype(ActionBase):
                                                                           prefered_item=True,
                                                                           archetype=True)
 
-            if unequipped is not None:
-                if artifact.id == unequipped.id:
-                    self.hero.add_message('action_inplace_diary_buying_artifact_and_change_equal_items', diary=True,
-                                          hero=self.hero, artifact=artifact, coins=coins, sell_price=sell_price)
-                else:
-                    self.hero.add_message('action_inplace_diary_buying_artifact_and_change', diary=True,
-                                          hero=self.hero, artifact=artifact, coins=coins, old_artifact=unequipped, sell_price=sell_price)
-            else:
+            if unequipped is None:
                 self.hero.add_message('action_inplace_diary_buying_artifact', diary=True, hero=self.hero, coins=coins, artifact=artifact)
+
+            elif artifact.id == unequipped.id:
+                self.hero.add_message('action_inplace_diary_buying_artifact_and_change_equal_items', diary=True,
+                                      hero=self.hero, artifact=artifact, coins=coins, sell_price=sell_price)
+            else:
+                self.hero.add_message('action_inplace_diary_buying_artifact_and_change', diary=True,
+                                      hero=self.hero, artifact=artifact, coins=coins, old_artifact=unequipped, sell_price=sell_price)
 
     def spend_money__sharpening_artifact(self):
         coins = self.try_to_spend_money()
@@ -1257,22 +1259,23 @@ class ActionEquippingPrototype(ActionBase):
 
     def process(self):
 
-        if self.state == self.STATE.EQUIPPING:
-            # TODO: calculate real percents
-            self.percents = min(self.percents + 0.25, 1)
+        if self.state != self.STATE.EQUIPPING:
+            return
+        # TODO: calculate real percents
+        self.percents = min(self.percents + 0.25, 1)
 
-            slot, unequipped, equipped = self.hero.equip_from_bag()
+        slot, unequipped, equipped = self.hero.equip_from_bag()
 
-            if equipped:
-                if unequipped:
-                    if equipped.id == unequipped.id:
-                        self.hero.add_message('action_equipping_diary_change_equal_items', diary=True, hero=self.hero, item=equipped)
-                    else:
-                        self.hero.add_message('action_equipping_diary_change_item', diary=True, hero=self.hero, unequipped=unequipped, equipped=equipped)
+        if equipped:
+            if unequipped:
+                if equipped.id == unequipped.id:
+                    self.hero.add_message('action_equipping_diary_change_equal_items', diary=True, hero=self.hero, item=equipped)
                 else:
-                    self.hero.add_message('action_equipping_diary_equip_item', diary=True, hero=self.hero, equipped=equipped)
+                    self.hero.add_message('action_equipping_diary_change_item', diary=True, hero=self.hero, unequipped=unequipped, equipped=equipped)
             else:
-                self.state = self.STATE.PROCESSED
+                self.hero.add_message('action_equipping_diary_equip_item', diary=True, hero=self.hero, equipped=equipped)
+        else:
+            self.state = self.STATE.PROCESSED
 
 
 class ActionTradingPrototype(ActionBase):
@@ -1355,25 +1358,26 @@ class ActionReligionCeremonyPrototype(ActionBase):
 
     def process(self):
 
-        if self.state == self.STATE.REGENERATE:
+        if self.state != self.STATE.REGENERATE:
 
-            self.percents += self.step_percents()
+            return
+        self.percents += self.step_percents()
 
-            if self.percents >= 1:
-                self.hero.last_religion_action_at_turn = game_turn.number()
+        if self.percents >= 1:
+            self.hero.last_religion_action_at_turn = game_turn.number()
 
-                if self.hero.can_religion_ceremony:
-                    multiplier = 2 if self.hero.can_receive_double_religiion_profit else 1
+            if self.hero.can_religion_ceremony:
+                multiplier = 2 if self.hero.can_receive_double_religiion_profit else 1
 
-                    experience = self.regeneration_type.amount * multiplier
+                experience = self.regeneration_type.amount * multiplier
 
-                    self.hero.add_experience(experience, without_modifications=True)
+                self.hero.add_experience(experience, without_modifications=True)
 
-                    self.hero.add_message('%s_profit_received' % self.textgen_id, hero=self.hero, experience=experience)
-                else:
-                    self.hero.add_message('%s_no_profit_received' % self.textgen_id, hero=self.hero, experience=0)
+                self.hero.add_message('%s_profit_received' % self.textgen_id, hero=self.hero, experience=experience)
+            else:
+                self.hero.add_message('%s_no_profit_received' % self.textgen_id, hero=self.hero, experience=0)
 
-                self.state = self.STATE.PROCESSED
+            self.state = self.STATE.PROCESSED
 
 
 class ActionDoNothingPrototype(ActionBase):
@@ -1597,7 +1601,7 @@ class ActionMoveSimplePrototype(ActionBase):
         return self.place
 
     def stop_percents(self):
-        return self.break_at if self.break_at else 1
+        return self.break_at or 1
 
     @property
     def description_text_name(self):

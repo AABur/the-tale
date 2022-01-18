@@ -48,10 +48,11 @@ class LinguisticsDate(object):
         return utg_words.WordForm(utg_words.Word(type=utg_relations.WORD_TYPE.TEXT, forms=(self.date.verbose_full(),)))
 
     def linguistics_restrictions(self, now=None):
-        restrictions = []
+        restrictions = [
+            linguistics_restrictions.get(real_feast)
+            for real_feast in tt_calendar.actual_real_feasts(now=now)
+        ]
 
-        for real_feast in tt_calendar.actual_real_feasts(now=now):
-            restrictions.append(linguistics_restrictions.get(real_feast))
 
         for calendar_date in tt_calendar.actual_dates(self.date, tt_calendar.DATE):
             restrictions.append(linguistics_restrictions.get(calendar_date))
@@ -79,12 +80,10 @@ class LinguisticsTime(object):
         return utg_words.WordForm(utg_words.Word(type=utg_relations.WORD_TYPE.TEXT, forms=(self.time.verbose(),)))
 
     def linguistics_restrictions(self, now=None):
-        restrictions = []
-
-        for day_time in tt_calendar.day_times(self.time):
-            restrictions.append(linguistics_restrictions.get(day_time))
-
-        return restrictions
+        return [
+            linguistics_restrictions.get(day_time)
+            for day_time in tt_calendar.day_times(self.time)
+        ]
 
 
 def linguistics_date(turn=None):

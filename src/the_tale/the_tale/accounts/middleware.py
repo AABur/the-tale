@@ -94,8 +94,7 @@ class FirstTimeVisitMiddleware(object):
         if not request.session.get(conf.settings.SESSION_FIRST_TIME_VISIT_VISITED_KEY):
             request.session[conf.settings.SESSION_FIRST_TIME_VISIT_KEY] = True
             request.session[conf.settings.SESSION_FIRST_TIME_VISIT_VISITED_KEY] = True
-        else:
-            if request.session.get(conf.settings.SESSION_FIRST_TIME_VISIT_KEY):
-                request.session[conf.settings.SESSION_FIRST_TIME_VISIT_KEY] = False
+        elif request.session.get(conf.settings.SESSION_FIRST_TIME_VISIT_KEY):
+            request.session[conf.settings.SESSION_FIRST_TIME_VISIT_KEY] = False
 
         return self.get_response(request)

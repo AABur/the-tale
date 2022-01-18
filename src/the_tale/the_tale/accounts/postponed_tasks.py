@@ -202,7 +202,7 @@ class TransferMoneyTask(PostponedLogic):
                 self.transfer_transaction.cancel()
                 return POSTPONED_TASK_LOGIC_RESULT.ERROR
 
-            if not (transfer_transaction_state.is_FROZEN and commission_transaction_state.is_FROZEN):
+            if not transfer_transaction_state.is_FROZEN:
                 return POSTPONED_TASK_LOGIC_RESULT.WAIT
 
             self.transfer_transaction.confirm()

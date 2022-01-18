@@ -30,38 +30,160 @@ class StorageTests(utils_testcase.TestCase):
         self.assertEqual(len(storage.achievements.all()), 6)
 
     def test_by_group(self):
-        self.assertEqual(set((a.id for a in storage.achievements.by_group(relations.ACHIEVEMENT_GROUP.DEATHS, only_approved=False))), set())
-        self.assertEqual(set((a.id for a in storage.achievements.by_group(relations.ACHIEVEMENT_GROUP.DEATHS, only_approved=True))), set())
+        self.assertEqual(
+            {
+                a.id
+                for a in storage.achievements.by_group(
+                    relations.ACHIEVEMENT_GROUP.DEATHS, only_approved=False
+                )
+            },
+            set(),
+        )
 
-        self.assertEqual(set((a.id for a in storage.achievements.by_group(relations.ACHIEVEMENT_GROUP.MONEY, only_approved=False))), set((self.achievement_1.id,
-                                                                                                                                          self.achievement_2.id,
-                                                                                                                                          self.achievement_3.id,
-                                                                                                                                          self.achievement_4.id,
-                                                                                                                                          self.achievement_5.id)))
-        self.assertEqual(set((a.id for a in storage.achievements.by_group(relations.ACHIEVEMENT_GROUP.MONEY, only_approved=True))), set((self.achievement_1.id,
-                                                                                                                                         self.achievement_3.id,
-                                                                                                                                         self.achievement_4.id,
-                                                                                                                                         self.achievement_5.id)))
+        self.assertEqual(
+            {
+                a.id
+                for a in storage.achievements.by_group(
+                    relations.ACHIEVEMENT_GROUP.DEATHS, only_approved=True
+                )
+            },
+            set(),
+        )
 
-        self.assertEqual(set((a.id for a in storage.achievements.by_group(relations.ACHIEVEMENT_GROUP.TIME, only_approved=False))), set((self.achievement_6.id,)))
-        self.assertEqual(set((a.id for a in storage.achievements.by_group(relations.ACHIEVEMENT_GROUP.TIME, only_approved=True))), set((self.achievement_6.id,)))
+
+        self.assertEqual(
+            {
+                a.id
+                for a in storage.achievements.by_group(
+                    relations.ACHIEVEMENT_GROUP.MONEY, only_approved=False
+                )
+            },
+            set(
+                (
+                    self.achievement_1.id,
+                    self.achievement_2.id,
+                    self.achievement_3.id,
+                    self.achievement_4.id,
+                    self.achievement_5.id,
+                )
+            ),
+        )
+
+        self.assertEqual(
+            {
+                a.id
+                for a in storage.achievements.by_group(
+                    relations.ACHIEVEMENT_GROUP.MONEY, only_approved=True
+                )
+            },
+            set(
+                (
+                    self.achievement_1.id,
+                    self.achievement_3.id,
+                    self.achievement_4.id,
+                    self.achievement_5.id,
+                )
+            ),
+        )
+
+
+        self.assertEqual(
+            {
+                a.id
+                for a in storage.achievements.by_group(
+                    relations.ACHIEVEMENT_GROUP.TIME, only_approved=False
+                )
+            },
+            set((self.achievement_6.id,)),
+        )
+
+        self.assertEqual(
+            {
+                a.id
+                for a in storage.achievements.by_group(
+                    relations.ACHIEVEMENT_GROUP.TIME, only_approved=True
+                )
+            },
+            set((self.achievement_6.id,)),
+        )
 
     def test_by_type(self):
-        self.assertEqual(set((a.id for a in storage.achievements.by_type(relations.ACHIEVEMENT_TYPE.DEATHS, only_approved=False))), set())
-        self.assertEqual(set((a.id for a in storage.achievements.by_type(relations.ACHIEVEMENT_TYPE.DEATHS, only_approved=True))), set())
+        self.assertEqual(
+            {
+                a.id
+                for a in storage.achievements.by_type(
+                    relations.ACHIEVEMENT_TYPE.DEATHS, only_approved=False
+                )
+            },
+            set(),
+        )
 
-        self.assertEqual(set((a.id for a in storage.achievements.by_type(relations.ACHIEVEMENT_TYPE.MONEY, only_approved=False))), set((self.achievement_1.id,
-                                                                                                                                        self.achievement_2.id,
-                                                                                                                                        self.achievement_3.id,
-                                                                                                                                        self.achievement_4.id,
-                                                                                                                                        self.achievement_5.id)))
-        self.assertEqual(set((a.id for a in storage.achievements.by_type(relations.ACHIEVEMENT_TYPE.MONEY, only_approved=True))), set((self.achievement_1.id,
-                                                                                                                                       self.achievement_3.id,
-                                                                                                                                       self.achievement_4.id,
-                                                                                                                                       self.achievement_5.id)))
+        self.assertEqual(
+            {
+                a.id
+                for a in storage.achievements.by_type(
+                    relations.ACHIEVEMENT_TYPE.DEATHS, only_approved=True
+                )
+            },
+            set(),
+        )
 
-        self.assertEqual(set((a.id for a in storage.achievements.by_type(relations.ACHIEVEMENT_TYPE.TIME, only_approved=False))), set((self.achievement_6.id,)))
-        self.assertEqual(set((a.id for a in storage.achievements.by_type(relations.ACHIEVEMENT_TYPE.TIME, only_approved=True))), set((self.achievement_6.id,)))
+
+        self.assertEqual(
+            {
+                a.id
+                for a in storage.achievements.by_type(
+                    relations.ACHIEVEMENT_TYPE.MONEY, only_approved=False
+                )
+            },
+            set(
+                (
+                    self.achievement_1.id,
+                    self.achievement_2.id,
+                    self.achievement_3.id,
+                    self.achievement_4.id,
+                    self.achievement_5.id,
+                )
+            ),
+        )
+
+        self.assertEqual(
+            {
+                a.id
+                for a in storage.achievements.by_type(
+                    relations.ACHIEVEMENT_TYPE.MONEY, only_approved=True
+                )
+            },
+            set(
+                (
+                    self.achievement_1.id,
+                    self.achievement_3.id,
+                    self.achievement_4.id,
+                    self.achievement_5.id,
+                )
+            ),
+        )
+
+
+        self.assertEqual(
+            {
+                a.id
+                for a in storage.achievements.by_type(
+                    relations.ACHIEVEMENT_TYPE.TIME, only_approved=False
+                )
+            },
+            set((self.achievement_6.id,)),
+        )
+
+        self.assertEqual(
+            {
+                a.id
+                for a in storage.achievements.by_type(
+                    relations.ACHIEVEMENT_TYPE.TIME, only_approved=True
+                )
+            },
+            set((self.achievement_6.id,)),
+        )
 
     def test_verify_achievements(self):
 

@@ -49,9 +49,12 @@ class Client(client.Client):
         self.impact_class = impact_class
 
     def cmd_add_power_impacts(self, impacts):
-        impacts = [impact.tt_object()
-                   for impact in impacts
-                   if impact.amount <= -1 or 1 <= impact.amount]
+        impacts = [
+            impact.tt_object()
+            for impact in impacts
+            if impact.amount <= -1 or impact.amount >= 1
+        ]
+
 
         if not impacts:
             return

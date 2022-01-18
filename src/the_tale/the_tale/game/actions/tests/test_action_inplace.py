@@ -301,7 +301,7 @@ class InPlaceActionTest(helpers.ActionEventsTestsMixin,
 
     def test_trade_action_create(self):
 
-        for i in range(int(c.MAX_BAG_SIZE * c.BAG_SIZE_TO_SELL_LOOT_FRACTION) + 1):
+        for _ in range(int(c.MAX_BAG_SIZE * c.BAG_SIZE_TO_SELL_LOOT_FRACTION) + 1):
             artifact = artifacts_storage.artifacts.generate_artifact_from_list(artifacts_storage.artifacts.loot, 1, rarity=artifacts_relations.RARITY.NORMAL)
             self.hero.bag.put_artifact(artifact)
 

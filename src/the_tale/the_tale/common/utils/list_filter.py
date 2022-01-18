@@ -124,10 +124,9 @@ def choice_element(caption, attribute, choices, default_value=None):
                         if subchoice_id == self.value:
                             self.choice_name = subchoice_name
                             break
-                else:
-                    if choice_id == self.value:
-                        self.choice_name = choice_name
-                        break
+                elif choice_id == self.value:
+                    self.choice_name = choice_name
+                    break
 
         @property
         def default_arguments(self): return {self.ATTRIBUTE: self.DEFAULT_VALUE}
