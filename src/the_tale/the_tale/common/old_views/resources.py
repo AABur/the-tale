@@ -29,11 +29,7 @@ def handler(*path, **params):
     @functools.wraps(handler)
     def decorator(func):
 
-        if isinstance(method, str):
-            methods = [method]
-        else:
-            methods = list(method)
-
+        methods = [method] if isinstance(method, str) else list(method)
         expected_args, expected_vargs, expected_kwargs, expected_defaults = inspect.getargspec(func)
 
         if expected_defaults is not None:
@@ -129,7 +125,7 @@ class HandlerInfo(object):
             if l[0] == r[0] == '#': return l < r
             if l[0] == '#': return False
             if r[0] == '#': return True
-            if l[0] != '#' and l != r: return l < r
+            if l != r: return l < r
 
         return len(self.path) < len(other.path)
 
@@ -203,16 +199,16 @@ class BaseResource(object):
 
 
     def json(self, charset='utf-8', mimetype='application/json', **kwargs):
-        response = django_http.HttpResponse(s11n.to_json(kwargs), content_type='%s; charset=%s' % (mimetype, charset))
-        return response
+        return django_http.HttpResponse(
+            s11n.to_json(kwargs),
+            content_type='%s; charset=%s' % (mimetype, charset),
+        )
 
     def json_ok(self, data=None, charset='utf-8', mimetype='application/json'):
         return self.json(mimetype=mimetype, charset=charset, **self.ok(data=data))
 
     def ok(self, data=None):
-        if data is None:
-            return {'status': 'ok'}
-        return {'status': 'ok', 'data': data}
+        return {'status': 'ok'} if data is None else {'status': 'ok', 'data': data}
 
     def processing(self, status_url):
         return {'status': 'processing',
@@ -227,9 +223,10 @@ class BaseResource(object):
 
     def js_error(self, code, messages=None, mimetype='application/x-javascript', charset='utf-8'):
         data = self.error(code=code, messages=messages)
-        response = django_http.HttpResponse('function DextErrorMessage(){return %s;};' % s11n.to_json(data),
-                                            content_type='%s; charset=%s' % (mimetype, charset))
-        return response
+        return django_http.HttpResponse(
+            'function DextErrorMessage(){return %s;};' % s11n.to_json(data),
+            content_type='%s; charset=%s' % (mimetype, charset),
+        )
 
     def error(self, code, messages=None):
         data = {'status': 'error',
@@ -259,8 +256,9 @@ class BaseResource(object):
         return self.json_error(code, message, charset=charset)
 
     def css(self, text, charset='utf-8'):
-        response = django_http.HttpResponse(text, content_type='text/css; charset=%s' % charset)
-        return response
+        return django_http.HttpResponse(
+            text, content_type='text/css; charset=%s' % charset
+        )
 
     def redirect(self, url, permanent=False):
         try:
@@ -277,11 +275,5 @@ def get_ip_from_request(request):
     """
     ip = request.META.get("HTTP_X_FORWARDED_FOR", None)
 
-    if ip:
-        # X_FORWARDED_FOR returns client1, proxy1, proxy2,...
-        ip = ip.split(", ")[0]
-
-    else:
-        ip = request.META.get("REMOTE_ADDR", "")
-
+    ip = ip.split(", ")[0] if ip else request.META.get("REMOTE_ADDR", "")
     return ip

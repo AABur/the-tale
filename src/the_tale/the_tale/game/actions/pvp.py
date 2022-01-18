@@ -25,10 +25,8 @@ class PvPData(object):
 
     def set_advantage(self, value):
         self.advantage = value
-        if self.advantage < -1:
-            self.advantage = -1
-        if self.advantage > 1:
-            self.advantage = 1
+        self.advantage = max(self.advantage, -1)
+        self.advantage = min(self.advantage, 1)
 
     def set_effectiveness(self, value):
         self.effectiveness = value

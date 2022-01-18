@@ -1204,7 +1204,7 @@ class GivePointsForTimeTests(BaseClanTests):
 
         interval = 60 * 90
 
-        expected_delta = int(math.ceil(attributes.points_gain * interval / (60*60)))
+        expected_delta = int(math.ceil(attributes.points_gain * interval / 60**2))
 
         with self.check_delta(lambda: tt_services.currencies.cmd_balance(self.clan.id, currency=relations.CURRENCY.ACTION_POINTS),
                               expected_delta):
@@ -1267,7 +1267,7 @@ class IsRoleChangeGetIntoLimitTests(BaseClanTests):
 
     def test_not_limited(self):
 
-        for i in range(self.expected_limit + 1):
+        for _ in range(self.expected_limit + 1):
             account = self.accounts_factory.create_account()
             logic._add_member(clan=self.clan,
                               account=account,
@@ -1287,7 +1287,7 @@ class IsRoleChangeGetIntoLimitTests(BaseClanTests):
 
     def test_limited(self):
 
-        for i in range(self.expected_limit - 1):
+        for _ in range(self.expected_limit - 1):
             account = self.accounts_factory.create_account()
             logic._add_member(clan=self.clan,
                               account=account,
@@ -1307,7 +1307,7 @@ class IsRoleChangeGetIntoLimitTests(BaseClanTests):
 
     def test_hard_limited(self):
 
-        for i in range(self.expected_limit + 1):
+        for _ in range(self.expected_limit + 1):
             account = self.accounts_factory.create_account()
             logic._add_member(clan=self.clan,
                               account=account,

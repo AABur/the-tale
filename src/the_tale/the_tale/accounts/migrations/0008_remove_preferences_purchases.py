@@ -20,7 +20,7 @@ def remove_preferences_permanent_purchases(apps, schema_editor):
 
         account.save()
 
-        for i in range(purchases_count):
+        for _ in range(purchases_count):
             apps.get_model("accounts", "Award").objects.create(account=account, type=7, description='Компенсация вечных покупок')
 
 

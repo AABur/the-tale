@@ -138,8 +138,7 @@ class AttributesMixin:
 
     def all_effects(self):
         for order in self.attrs.effects_order():
-            for effect in self.effects_generator(order):
-                yield effect
+            yield from self.effects_generator(order)
 
     def refresh_attributes(self):
         self.attrs.reset()

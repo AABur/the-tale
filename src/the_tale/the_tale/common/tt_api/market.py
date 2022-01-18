@@ -19,10 +19,7 @@ class Client(client.Client):
 
     def cmd_place_sell_lots(self, lots):
 
-        raw_lots = []
-
-        for lot in lots:
-            raw_lots.append(self.lot_to_protobuf(lot))
+        raw_lots = [self.lot_to_protobuf(lot) for lot in lots]
 
         operations.sync_request(url=self.url('place-sell-lot'),
                                 data=tt_protocol_market_pb2.PlaceSellLotRequest(lots=raw_lots),
@@ -38,12 +35,7 @@ class Client(client.Client):
                                          data=request,
                                          AnswerType=tt_protocol_market_pb2.InfoResponse)
 
-        data = []
-
-        for info in answer.info:
-            data.append(self.protobuf_to_item_type_summary(info))
-
-        return data
+        return [self.protobuf_to_item_type_summary(info) for info in answer.info]
 
     def cmd_item_type_prices(self, item_type, owner_id):
         answer = operations.sync_request(url=self.url('item-type-prices'),

@@ -55,9 +55,7 @@ class BaseBuyTask(PostponedLogic):
 
     @property
     def error_message(self):
-        if self.custom_error:
-            return self.custom_error
-        return self.state.text
+        return self.custom_error or self.state.text
 
     @utils_decorators.lazy_property
     def account(self):

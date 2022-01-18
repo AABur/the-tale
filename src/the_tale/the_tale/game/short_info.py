@@ -41,10 +41,16 @@ class ShortAccountInfo(object):
 
 
 def get_accounts_accounts_info(accounts_ids):
-    heroes = {}
+    heroes = {
+        hero.id: ShortHeroInfo(
+            name=hero.name,
+            race=hero.race,
+            gender=hero.gender,
+            level=hero.level,
+        )
+        for hero in heroes_logic.load_heroes_by_account_ids(accounts_ids)
+    }
 
-    for hero in heroes_logic.load_heroes_by_account_ids(accounts_ids):
-        heroes[hero.id] = ShortHeroInfo(name=hero.name, race=hero.race, gender=hero.gender, level=hero.level)
 
     clans_ids = set()
 

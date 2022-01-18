@@ -49,9 +49,8 @@ class BaseWorker(object):
             if self.logger:
                 self.logger.info('set stop_required flag')
             self.stop_required = True
-        else:
-            if self.logger:
-                self.logger.info('do not set stop_required flag: worker does not process stop signals')
+        elif self.logger:
+            self.logger.info('do not set stop_required flag: worker does not process stop signals')
 
     def run(self):
         from the_tale.common.settings import settings
@@ -109,7 +108,9 @@ class BaseWorker(object):
                     raise exceptions.NoProcessMethodError(method=cmd_name)
 
     def send_cmd(self, tp, data=None):
-        self.command_queue.put({'type': tp, 'data': data if data else {}}, serializer='json', compression=None)
+        self.command_queue.put(
+            {'type': tp, 'data': data or {}}, serializer='json', compression=None
+        )
 
     def _prepair_cmd_data_for_log(self, data):
         if self.FULL_CMD_LOG:
@@ -147,14 +148,13 @@ class BaseWorker(object):
 
             cmd = answer_cmd.payload
 
-            if cmd['code'] == code:
-                worker_id = cmd['worker']
-                if worker_id in workers:
-                    workers.remove(worker_id)
-                else:
-                    raise exceptions.UnexpectedAnswerError(cmd=cmd)
-            else:
+            if cmd['code'] != code:
                 raise exceptions.WrongAnswerError(cmd=cmd, workers=workers)
+            worker_id = cmd['worker']
+            if worker_id in workers:
+                workers.remove(worker_id)
+            else:
+                raise exceptions.UnexpectedAnswerError(cmd=cmd)
 
     def cmd_answer(self, code, worker):
         self.answers_queue.put({'code': code, 'worker': worker}, serializer='json', compression=None)

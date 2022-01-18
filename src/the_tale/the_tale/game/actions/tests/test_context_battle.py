@@ -226,7 +226,7 @@ class BattleContextTest(utils_testcase.TestCase):
 
     def test_ninja(self):
         self.context.use_ninja(1.0)
-        for i in range(100):
+        for _ in range(100):
             self.assertTrue(self.context.should_miss_attack())
 
     @mock.patch('the_tale.game.balance.constants.DAMAGE_DELTA', 0)

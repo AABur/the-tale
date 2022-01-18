@@ -34,7 +34,7 @@ class IndexRequestsTests(AccountRequestsTests):
                                                                                   ('abbr3', 1)))
 
     def test_index_pagination(self):
-        for i in range(conf.settings.ACCOUNTS_ON_PAGE):
+        for _ in range(conf.settings.ACCOUNTS_ON_PAGE):
             self.accounts_factory.create_account()
         self.check_html_ok(self.request_html(django_reverse('accounts:')), texts=(('pgf-account-record', conf.settings.ACCOUNTS_ON_PAGE),))
         self.check_html_ok(self.request_html(django_reverse('accounts:') + '?page=2'), texts=(('pgf-account-record', 3),))

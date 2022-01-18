@@ -11,7 +11,10 @@ def get_linguistic_entity_info(entity_id, contribution_type, source):
 
     author_type, author_id = contributors[0]
 
-    contributors_count = sum(1 for type, a_id in contributors if type == contribution_type)
+    contributors_count = sum(
+        type == contribution_type for type, a_id in contributors
+    )
+
 
     if author_type == contribution_type:
         contributors_count -= 1

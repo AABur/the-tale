@@ -58,7 +58,7 @@ class BattleTests(TestsBase):
         hit_selected = False
         run_up_push_selected = False
         vampire_strike_selected = False
-        for i in range(100):
+        for _ in range(100):
             ability = actor.choose_ability()
 
             if ability.get_id() == heroes_abilities_battle.HIT.get_id():
@@ -77,7 +77,12 @@ class BattleTests(TestsBase):
     def test_choose_ability__additional_abilities(self):
         all_abilities = [ability(level=ability.MAX_LEVEL) for ability in list(heroes_abilities.ABILITIES.values())]
 
-        active_abilities = set(ability.get_id() for ability in all_abilities if ability.activation_type.is_ACTIVE)
+        active_abilities = {
+            ability.get_id()
+            for ability in all_abilities
+            if ability.activation_type.is_ACTIVE
+        }
+
 
         self.hero.health = 1  # allow regeneration
 
@@ -86,7 +91,7 @@ class BattleTests(TestsBase):
         chosen_abilities = set()
 
         with mock.patch('the_tale.game.heroes.objects.Hero.additional_abilities', all_abilities):
-            for i in range(1000):
+            for _ in range(1000):
                 chosen_abilities.add(actor.choose_ability().get_id())
 
         self.assertEqual(active_abilities, chosen_abilities)
@@ -115,9 +120,7 @@ class BattleTests(TestsBase):
 
         # mock abilities modify_attribute instead of hereos, since we test correct work of it
         def modify_attribute(self, modifier, value):
-            if modifier.is_ADDITIONAL_ABILITIES:
-                return all_abilities
-            return value
+            return all_abilities if modifier.is_ADDITIONAL_ABILITIES else value
 
         with mock.patch('the_tale.game.heroes.abilities.AbilitiesPrototype.modify_attribute', modify_attribute):
             for i in range(1000):
@@ -158,7 +161,7 @@ class BattleTests(TestsBase):
         hit_selected = False
         run_up_push_selected = False
         vampire_strike_selected = False
-        for i in range(100):
+        for _ in range(100):
             ability = actor.choose_ability()
 
             if ability.get_id() == heroes_abilities_battle.HIT.get_id():
@@ -192,12 +195,15 @@ class BattleTests(TestsBase):
 
     def check_first_strike(self, actor_1, actor_2, turn, expected_actors):
         with mock.patch('the_tale.game.actions.battle.strike') as strike:
-            for i in range(100):
+            for _ in range(100):
                 actor_1.context.turn = turn
                 actor_2.context.turn = turn
                 battle.make_turn(actor_1, actor_2, self.hero)
 
-        self.assertEqual(set(id(call[1]['attacker']) for call in strike.call_args_list), expected_actors)
+        self.assertEqual(
+            {id(call[1]['attacker']) for call in strike.call_args_list},
+            expected_actors,
+        )
 
     def test_first_strike__no_actors(self):
         actor_1, actor_2 = self.get_actors()

@@ -76,12 +76,16 @@ class PermanentPurchase(PurchaseItem):
         if self.purchase_type in account.permanent_purchases:
             return False
 
-        if self.purchase_type.might_required is not None:
-            if account.might >= self.purchase_type.might_required:
-                return False
+        if (
+            self.purchase_type.might_required is not None
+            and account.might >= self.purchase_type.might_required
+        ):
+            return False
 
-        if self.purchase_type.level_required is not None:
-            if hero.level >= self.purchase_type.level_required:
-                return False
+        if (
+            self.purchase_type.level_required is not None
+            and hero.level >= self.purchase_type.level_required
+        ):
+            return False
 
         return True

@@ -31,11 +31,12 @@ def create_handler_view(resource_class, handler):
 
         args = info['expected']['args']
 
-        arguments = {}
+        arguments = {
+            arg: request.GET.get(arg)
+            for arg in args
+            if arg != 'self' and arg in request.GET
+        }
 
-        for arg in args:
-            if arg != 'self' and arg in request.GET:
-                arguments[arg] = request.GET.get(arg)
 
         if method:
             return method(**arguments)
@@ -48,11 +49,12 @@ def create_handler_view(resource_class, handler):
 
 
 def resource_patterns(resource_class, args={}):
-    patterns_args = []
-
-    for handler in resource_class.get_handlers():
-        patterns_args.append(django_urls.url(handler.url_regexp,
-                                             create_handler_view(resource_class, handler),
-                                             name=handler.name,
-                                             kwargs=args))
-    return patterns_args
+    return [
+        django_urls.url(
+            handler.url_regexp,
+            create_handler_view(resource_class, handler),
+            name=handler.name,
+            kwargs=args,
+        )
+        for handler in resource_class.get_handlers()
+    ]

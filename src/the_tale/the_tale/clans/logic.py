@@ -206,12 +206,10 @@ def load_clan(clan_id=None, clan_model=None):
 
 
 def load_clans(clans_ids):
-    clans = []
-
-    for clan_model in models.Clan.objects.filter(id__in=clans_ids):
-        clans.append(load_clan(clan_model=clan_model))
-
-    return clans
+    return [
+        load_clan(clan_model=clan_model)
+        for clan_model in models.Clan.objects.filter(id__in=clans_ids)
+    ]
 
 
 @django_transaction.atomic
@@ -498,22 +496,24 @@ def request_for_clan_and_account(clan_id, account_id):
 
 def requests_for_account(account_id):
 
-    requests = []
-
-    for request in models.MembershipRequest.objects.filter(account_id=account_id, type=relations.MEMBERSHIP_REQUEST_TYPE.FROM_CLAN):
-        requests.append(load_request(request_model=request))
-
-    return requests
+    return [
+        load_request(request_model=request)
+        for request in models.MembershipRequest.objects.filter(
+            account_id=account_id,
+            type=relations.MEMBERSHIP_REQUEST_TYPE.FROM_CLAN,
+        )
+    ]
 
 
 def requests_for_clan(clan_id):
 
-    requests = []
-
-    for request in models.MembershipRequest.objects.filter(clan_id=clan_id, type=relations.MEMBERSHIP_REQUEST_TYPE.FROM_ACCOUNT):
-        requests.append(load_request(request_model=request))
-
-    return requests
+    return [
+        load_request(request_model=request)
+        for request in models.MembershipRequest.objects.filter(
+            clan_id=clan_id,
+            type=relations.MEMBERSHIP_REQUEST_TYPE.FROM_ACCOUNT,
+        )
+    ]
 
 
 def requests_number_for_clan(clan_id):
@@ -633,7 +633,7 @@ def give_points_for_time(clan_id, interval):
 
     attributes = load_attributes(clan_id)
 
-    amount = int(math.ceil(attributes.points_gain * (interval / (60*60))))
+    amount = int(math.ceil(attributes.points_gain * (interval / 60**2)))
 
     restrictions = tt_services.currencies.Restrictions(hard_minimum=0,
                                                        soft_maximum=tt_clans_constants.MAXIMUM_POINTS)
@@ -681,8 +681,10 @@ def get_combat_personnel(clan_id):
 
 
 def get_combat_personnel__by_memberships(memberships):
-    return sum(1 for membership in memberships.values()
-               if relations.PERMISSION.EMISSARIES_QUESTS in membership.role.permissions)
+    return sum(
+        relations.PERMISSION.EMISSARIES_QUESTS in membership.role.permissions
+        for membership in memberships.values()
+    )
 
 
 def is_clan_in_fighters_limit(clan_id, delta):

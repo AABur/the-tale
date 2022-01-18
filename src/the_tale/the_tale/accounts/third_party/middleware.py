@@ -35,13 +35,12 @@ class ThirdPartyMiddleware(object):
             access_token = prototypes.AccessTokenPrototype.get_by_uid(access_token_uid)
 
             if access_token is None:
-                if request.user.is_authenticated:
-                    accounts_logic.logout_user(request)
-                    request.session[conf.settings.ACCESS_TOKEN_SESSION_KEY] = access_token_uid
-                    return HANDLE_THIRD_PARTY_RESULT.ACCESS_TOKEN_REJECTED__LOGOUT
-                else:
+                if not request.user.is_authenticated:
                     return HANDLE_THIRD_PARTY_RESULT.ACCESS_TOKEN_REJECTED
 
+                accounts_logic.logout_user(request)
+                request.session[conf.settings.ACCESS_TOKEN_SESSION_KEY] = access_token_uid
+                return HANDLE_THIRD_PARTY_RESULT.ACCESS_TOKEN_REJECTED__LOGOUT
             else:
                 cached_data = access_token.cache_data()
                 utils_cache.set(cache_key, cached_data, conf.settings.ACCESS_TOKEN_CACHE_TIMEOUT)

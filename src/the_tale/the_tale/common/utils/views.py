@@ -123,7 +123,7 @@ class View(object):
             if l[0] == r[0] == '#': return l < r
             if l[0] == '#': return False
             if r[0] == '#': return True
-            if l[0] != '#' and l != r: return l < r
+            if l != r: return l < r
 
         return len(self.path) < len(other.path)
 
@@ -185,12 +185,7 @@ class Resource(object):
         return decorator
 
     def get_urls(self):
-        urls = []
-
-        for view in sorted(self.views.values()):
-            urls.append(view.get_url_record())
-
-        return urls
+        return [view.get_url_record() for view in sorted(self.views.values())]
 
 
 class ProcessorArgument(object):
@@ -438,11 +433,8 @@ class RelationArgumentProcessor(ArgumentProcessor):
 
         try:
             value = self.value_type(raw_value)
-        except ValueError:
+        except (ValueError, TypeError):
             self.raise_wrong_format()
-        except TypeError:
-            self.raise_wrong_format()
-
         try:
             return self.relation(value)
         except rels_exceptions.NotExternalValueError:
@@ -529,11 +521,7 @@ class PageError(Page):
             else:
                 kwargs['template'] = conf.settings.PAGE_ERROR_TEMPLATE
 
-        if isinstance(errors, str):
-            error = errors
-        else:
-            error = list(errors.values())[0][0]
-
+        error = errors if isinstance(errors, str) else list(errors.values())[0][0]
         if 'content' not in kwargs:
             kwargs['content'] = {}
 

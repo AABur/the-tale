@@ -14,8 +14,6 @@ def convert_textgen_noun_json_to_utg(textgen_data, aninality):
     if 'мн' in textgen_data['properties']:
         properties[2] = 1
 
-    utg_data = {'forms': textgen_data['forms'],
+    return {'forms': textgen_data['forms'],
                 'type': 0,
                 'properties': properties}
-
-    return utg_data

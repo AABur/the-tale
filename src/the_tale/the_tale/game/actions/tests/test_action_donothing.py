@@ -41,7 +41,7 @@ class DoNothingActionTest(utils_testcase.TestCase):
 
     def test_full(self):
 
-        for i in range(7):
+        for _ in range(7):
             self.assertEqual(len(self.hero.actions.actions_list), 2)
             self.assertTrue(self.action_donothing.leader)
             self.storage.process_turn(continue_steps_if_needed=False)

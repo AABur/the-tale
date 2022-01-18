@@ -33,8 +33,7 @@ class ResurrectActionTest(utils_testcase.TestCase):
 
     def test_processed(self):
 
-        for i in range(c.TURNS_TO_RESURRECT - 1):
-
+        for _ in range(c.TURNS_TO_RESURRECT - 1):
             self.storage.process_turn()
 
             game_turn.increment()

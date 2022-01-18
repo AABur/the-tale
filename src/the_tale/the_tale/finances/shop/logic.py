@@ -61,13 +61,10 @@ class PermanentRelationsStorage(utils_permanent_storage.PermanentRelationsStorag
 
 
 def create_lots(owner_id, cards, price):
-    lots = []
-
-    for card in cards:
-        lots.append(objects.Lot(owner_id=owner_id,
+    lots = [objects.Lot(owner_id=owner_id,
                                 full_type=card.item_full_type,
                                 item_id=card.uid,
-                                price=price))
+                                price=price) for card in cards]
 
     cards_logic.change_owner(old_owner_id=owner_id,
                              new_owner_id=accounts_logic.get_system_user_id(),

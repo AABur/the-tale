@@ -217,7 +217,7 @@ class ArenaPvP1x1(MetaAction):
         hero.preferences.set(heroes_relations.PREFERENCE_TYPE.ARCHETYPE, random.choice(game_relations.ARCHETYPE.records))
 
         hero.reset_level()
-        for i in range(enemy.level - 1):
+        for _ in range(enemy.level - 1):
             hero.randomized_level_up(increment_level=True)
         hero.randomize_equip()
 

@@ -25,7 +25,7 @@ def create_test_map():
     p3 = places_logic.create_place(x=1, y=3, size=3, utg_name=game_names.generator().get_test_name(name='1x10'), race=relations.RACE.HUMAN)
 
     for place in places_storage.places.all():
-        for i in range(3):
+        for _ in range(3):
             persons_logic.create_person(place=place,
                                         race=relations.RACE.random(),
                                         gender=relations.GENDER.random(),
@@ -353,7 +353,12 @@ def accounts_info(accounts_ids):
 
 
 def clans_info(accounts_data):
-    clans_ids = set(account['clan'] for account in accounts_data.values() if account['clan'] is not None)
+    clans_ids = {
+        account['clan']
+        for account in accounts_data.values()
+        if account['clan'] is not None
+    }
+
     return {clan.id: {'id': clan.id,
                       'abbr': clan.abbr,
                       'name': clan.name}

@@ -13,11 +13,7 @@ class SpoilerTag(postmarkup.TagBase):
     def render_open(self, parser, node_index):
         parser.tag_data[self.tag_key] = parser.tag_data.setdefault(self.tag_key, 0) + 1
 
-        if self.params:
-            caption = self.params.strip()
-        else:
-            caption = 'спойлер'
-
+        caption = self.params.strip() if self.params else 'спойлер'
         return '''
 <div class="accordion" id="pgf-spoiler-%(accordion_id)s">
   <div class="accordion-group">
@@ -45,11 +41,7 @@ class SafeSpoilerTag(postmarkup.TagBase):
     def render_open(self, parser, node_index):
         parser.tag_data[self.tag_key] = parser.tag_data.setdefault(self.tag_key, 0) + 1
 
-        if self.params:
-            caption = self.params.strip()
-        else:
-            caption = 'спойлер'
-
+        caption = self.params.strip() if self.params else 'спойлер'
         return '--------------%(caption)s--------------<br/>' % {'caption': caption}
 
     def render_close(self, parser, node_index):
@@ -133,15 +125,14 @@ class MetaRelationTag(postmarkup.TagBase):
         self.tag_key = 'MetaRelationTag.nest_level'
 
     def render_open(self, parser, node_index):
-        if self.params:
-            uid = self.params.strip()
-            try:
-                meta_object = meta_relations_logic.get_object_by_uid(uid)
-            except meta_relations_exceptions.MetaRelationsError:
-                return '«неизвестный объект игры»'
-        else:
+        if not self.params:
             return '«неизвестный объект игры»'
 
+        uid = self.params.strip()
+        try:
+            meta_object = meta_relations_logic.get_object_by_uid(uid)
+        except meta_relations_exceptions.MetaRelationsError:
+            return '«неизвестный объект игры»'
         return f'<a href="{meta_object.url}">{meta_object.caption}</a>'
 
     def render_close(self, parser, node_index):
@@ -156,15 +147,14 @@ class MetaRelationUrlTag(postmarkup.TagBase):
 
     def render_open(self, parser, node_index):
         parser.tag_data[self.tag_key] = parser.tag_data.setdefault(self.tag_key, 0) + 1
-        if self.params:
-            uid = self.params.strip()
-            try:
-                meta_object = meta_relations_logic.get_object_by_uid(uid)
-            except meta_relations_exceptions.MetaRelationsError:
-                return '«неизвестный объект игры»'
-        else:
+        if not self.params:
             return '«неизвестный объект игры»'
 
+        uid = self.params.strip()
+        try:
+            meta_object = meta_relations_logic.get_object_by_uid(uid)
+        except meta_relations_exceptions.MetaRelationsError:
+            return '«неизвестный объект игры»'
         return f'<a href="{meta_object.url}">'
 
     def render_close(self, parser, node_index):

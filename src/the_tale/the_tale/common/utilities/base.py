@@ -77,7 +77,7 @@ class Command(django_management.BaseCommand):
         command_name = sys.argv[1]
 
         if not options['game_can_be_in_maintenance_mode'] and os.path.isfile(django_settings.MAINTENANCE_FILE):
-            self.logger.info(f'game is in MAINTENANCE mode, no command can be running')
+            self.logger.info('game is in MAINTENANCE mode, no command can be running')
             return
 
         record_id = logic.log_command_waiting(name=command_name)
@@ -124,11 +124,11 @@ class Command(django_management.BaseCommand):
 
                 logic.log_command_start(record_id)
 
-                self.logger.info(f'run logic')
+                self.logger.info('run logic')
 
                 self._handle(*args, **options)
 
-                self.logger.info(f'logic processed')
+                self.logger.info('logic processed')
 
             result = relations.RESULT.SUCCESS
 

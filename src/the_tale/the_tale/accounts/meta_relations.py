@@ -40,10 +40,11 @@ class Account(meta_relations_objects.MetaType):
     def create_from_ids(cls, ids):
         records = models.Account.objects.filter(id__in=ids)
 
-        meta_objects = {}
+        meta_objects = {
+            record.id: cls.create_from_object(prototypes.AccountPrototype(record))
+            for record in records
+        }
 
-        for record in records:
-            meta_objects[record.id] = cls.create_from_object(prototypes.AccountPrototype(record))
 
         for id in ids:
             if id not in meta_objects:

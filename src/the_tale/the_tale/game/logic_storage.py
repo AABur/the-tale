@@ -267,9 +267,8 @@ class LogicStorage(object):
         return bundles
 
     def _get_bundles_to_cache(self):
-        return set(hero.actions.current_action.bundle_id
-                   for hero in self.heroes.values()
-                   if hero.is_ui_caching_required)
+        return {hero.actions.current_action.bundle_id for hero in self.heroes.values()
+                       if hero.is_ui_caching_required}
 
     def save_changed_data(self, logger=None):
         saved_bundles = self._get_bundles_to_save()

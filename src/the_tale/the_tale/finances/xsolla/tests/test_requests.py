@@ -24,14 +24,18 @@ class BaseRequestsTests(utils_testcase.TestCase):
                              **kwargs)
 
     def construct_answer(self, check_result):
-        answer = '''<?xml version="1.0" encoding="windows-1251"?>
+        return (
+            '''<?xml version="1.0" encoding="windows-1251"?>
 <response>
     <result>%(xsolla_result)s</result>
     <comment>%(comment)s</comment>
 </response>
-''' % {'xsolla_result': check_result.xsolla_result.value, 'comment': check_result.text}
-
-        return answer
+'''
+            % {
+                'xsolla_result': check_result.xsolla_result.value,
+                'comment': check_result.text,
+            }
+        )
 
 
 class CommonRequestsTests(BaseRequestsTests):
@@ -67,9 +71,11 @@ class CheckUserRequestsTests(BaseRequestsTests):
         super(CheckUserRequestsTests, self).setUp()
 
     def construct_url(self, md5_hash=None, **kwargs):
-        return super(CheckUserRequestsTests, self).construct_url(command=relations.COMMAND_TYPE.CHECK,
-                                                                 md5_hash=md5_hash if md5_hash else self.check_user_md5,
-                                                                 **kwargs)
+        return super(CheckUserRequestsTests, self).construct_url(
+            command=relations.COMMAND_TYPE.CHECK,
+            md5_hash=md5_hash or self.check_user_md5,
+            **kwargs
+        )
 
     def test_check_user__wrong_md5(self):
         self.check_xml_ok(self.request_xml(self.construct_url(md5_hash='bla-bla')),
@@ -118,7 +124,8 @@ class PayRequestsTests(BaseRequestsTests):
     def construct_pay_answer(self, pay_result, internal_id, **kwargs):
         xsolla_id = kwargs.get('xsolla_id', self.xsolla_id)
         payment_sum = kwargs.get('payment_sum', self.payment_sum)
-        answer = '''<?xml version="1.0" encoding="windows-1251"?>
+        return (
+            '''<?xml version="1.0" encoding="windows-1251"?>
 <response>
     <id>%(xsolla_id)s</id>
     <id_shop>%(internal_id)s</id_shop>
@@ -126,13 +133,15 @@ class PayRequestsTests(BaseRequestsTests):
     <result>%(xsolla_result)s</result>
     <comment>%(comment)s</comment>
 </response>
-''' % {'xsolla_result': pay_result.xsolla_result.value,
-            'comment': pay_result.text,
-            'xsolla_id': xsolla_id,
-            'internal_id': internal_id,
-            'sum': payment_sum}
-
-        return answer
+'''
+            % {
+                'xsolla_result': pay_result.xsolla_result.value,
+                'comment': pay_result.text,
+                'xsolla_id': xsolla_id,
+                'internal_id': internal_id,
+                'sum': payment_sum,
+            }
+        )
 
     def test_wrong_md5(self):
         self.check_xml_ok(self.request_xml(self.construct_url(md5_hash='bla-bla')),
@@ -170,9 +179,11 @@ class CancelRequestsTests(BaseRequestsTests):
         self.cancel_md5 = logic.cancel_md5(command=relations.COMMAND_TYPE.CANCEL, id=self.xsolla_id)
 
     def construct_url(self, md5_hash=None, **kwargs):
-        return super(CancelRequestsTests, self).construct_url(command=relations.COMMAND_TYPE.CANCEL,
-                                                              md5_hash=md5_hash if md5_hash else self.cancel_md5,
-                                                              **kwargs)
+        return super(CancelRequestsTests, self).construct_url(
+            command=relations.COMMAND_TYPE.CANCEL,
+            md5_hash=md5_hash or self.cancel_md5,
+            **kwargs
+        )
 
     def test_not_supported(self):
         self.check_xml_ok(self.request_xml(self.construct_url()),

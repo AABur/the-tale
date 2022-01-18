@@ -26,17 +26,15 @@ def get_items_count(items):
 
 def get_collections_statistics(account_items):
 
-    statistics = {'total_items_in_collections': {},
-                  'total_items_in_kits': {},
-                  'account_items_in_collections': {},
-                  'account_items_in_kits': {},
-                  'total_items': 0,
-                  'account_items': 0}
-
     items_in_kits, items_in_collections = get_items_count(storage.items.all())
-    statistics['total_items_in_kits'] = items_in_kits
-    statistics['total_items_in_collections'] = items_in_collections
-    statistics['total_items'] = sum(items_in_collections.values())
+    statistics = {
+        'account_items_in_collections': {},
+        'account_items_in_kits': {},
+        'account_items': 0,
+        'total_items_in_kits': items_in_kits,
+        'total_items_in_collections': items_in_collections,
+        'total_items': sum(items_in_collections.values()),
+    }
 
     if account_items:
         items_in_kits, items_in_collections = get_items_count(item for item in storage.items.all() if item.id in account_items.items_ids())

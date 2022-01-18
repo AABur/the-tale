@@ -195,7 +195,13 @@ class ThreadsResource(BaseForumResource):
 
         thread_from, thread_to = paginator.page_borders(page)
 
-        threads = list(prototypes.ThreadPrototype(thread_model) for thread_model in threads_query.select_related().order_by('-updated_at')[thread_from:thread_to])
+        threads = [
+            prototypes.ThreadPrototype(thread_model)
+            for thread_model in threads_query.select_related().order_by(
+                '-updated_at'
+            )[thread_from:thread_to]
+        ]
+
 
         return self.template('forum/threads_list.html',
                              {'is_filtering': is_filtering,
@@ -244,9 +250,12 @@ class ThreadsResource(BaseForumResource):
         except ValueError:
             new_subcategory_id = None
 
-        if new_subcategory_id is not None and self.thread.subcategory.id != edit_thread_form.c.subcategory:
-            if not can_change_thread_category(self.account):
-                return self.json_error('forum.update_thread.no_permissions_to_change_subcategory', 'У вас нет прав для переноса темы в другой раздел')
+        if (
+            new_subcategory_id is not None
+            and self.thread.subcategory.id != edit_thread_form.c.subcategory
+            and not can_change_thread_category(self.account)
+        ):
+            return self.json_error('forum.update_thread.no_permissions_to_change_subcategory', 'У вас нет прав для переноса темы в другой раздел')
 
         if account_is_moderator:
             self.thread.update(caption=edit_thread_form.c.caption, new_subcategory_id=new_subcategory_id, important=edit_thread_form.c.important)
@@ -337,7 +346,10 @@ class ThreadPageData(object):
         if post_from == 0:
             pages_on_page_slice = pages_on_page_slice[1:]
 
-        self.has_post_on_page = any([post.author.id == self.account.id for post in pages_on_page_slice])
+        self.has_post_on_page = any(
+            post.author.id == self.account.id for post in pages_on_page_slice
+        )
+
         self.new_post_form = forms.NewPostForm()
         self.start_posts_from = page * conf.settings.POSTS_ON_PAGE
 
@@ -351,7 +363,10 @@ class ThreadPageData(object):
         self.ignore_first_post = (self.inline and self.paginator.current_page_number == 0)
         self.can_post = self.account.is_authenticated and not self.account.is_fast
 
-        self.no_posts = (len(self.posts) == 0) or (self.ignore_first_post and len(self.posts) == 1)
+        self.no_posts = not self.posts or (
+            self.ignore_first_post and len(self.posts) == 1
+        )
+
         self.can_subscribe = self.account.is_authenticated and not self.account.is_fast
 
         self.has_subscription = prototypes.SubscriptionPrototype.has_subscription(self.account, self.thread)
@@ -480,7 +495,13 @@ class ForumResource(BaseForumResource):
 
     @old_views.handler('', method='get')
     def index(self):
-        categories = list(prototypes.CategoryPrototype(category_model) for category_model in models.Category.objects.all().order_by('order', 'id'))
+        categories = [
+            prototypes.CategoryPrototype(category_model)
+            for category_model in models.Category.objects.all().order_by(
+                'order', 'id'
+            )
+        ]
+
 
         subcategories = prototypes.SubCategoryPrototype.subcategories_visible_to_account(account=self.account if self.account.is_authenticated else None)
 
@@ -490,10 +511,11 @@ class ForumResource(BaseForumResource):
                        for subcategory in subcategories}
 
         for category in categories:
-            children = []
-            for subcategory in subcategories:
-                if subcategory.category_id == category.id:
-                    children.append(subcategory)
+            children = [
+                subcategory
+                for subcategory in subcategories
+                if subcategory.category_id == category.id
+            ]
 
             forum_structure.append({'category': category,
                                     'subcategories': children})

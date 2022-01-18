@@ -166,7 +166,7 @@ def api_diary(context):
 @resource('api', 'names', name='api-names')
 def api_names(context):
 
-    if context.names_number < 0 or 100 < context.names_number:
+    if context.names_number < 0 or context.names_number > 100:
         raise utils_views.ViewError(code='wrong_number', message='Нельзя сгенерировать такое количество имён')
 
     result_names = game_names.get_names_set(number=context.names_number)

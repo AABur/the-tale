@@ -96,7 +96,7 @@ class IdlenessActionTest(clans_helpers.ClansTestsMixin,
         self.action_idl.state = prototypes.ActionIdlenessPrototype.STATE.WAITING
         self.action_idl.percents = 0
 
-        for i in range(c.TURNS_TO_IDLE * self.hero.level):
+        for _ in range(c.TURNS_TO_IDLE * self.hero.level):
             self.storage.process_turn()
             game_turn.increment()
             self.assertEqual(len(self.hero.actions.actions_list), 1)

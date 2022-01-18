@@ -94,8 +94,14 @@ class PostResource(utils_resources.Resource):
         votes = {}
 
         if self.account.is_authenticated:
-            votes = dict((vote.post_id, prototypes.VotePrototype(vote))
-                         for vote in models.Vote.objects.filter(post_id__in=[post.id for post in posts], voter=self.account._model))
+            votes = {
+                vote.post_id: prototypes.VotePrototype(vote)
+                for vote in models.Vote.objects.filter(
+                    post_id__in=[post.id for post in posts],
+                    voter=self.account._model,
+                )
+            }
+
 
         return self.template('blogs/index.html',
                              {'posts': posts,

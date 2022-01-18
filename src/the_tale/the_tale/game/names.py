@@ -118,7 +118,7 @@ def get_names_set(number):
             gender_slug = 'male' if gender.is_MALE else 'female'
             result_names[race_slug][gender_slug] = []
 
-            for i in range(number):
+            for _ in range(number):
                 name_forms = list(generator().get_name(race=race, gender=gender).forms[:6])
                 result_names[race_slug][gender_slug].append(name_forms)
 

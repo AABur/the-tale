@@ -260,14 +260,30 @@ class TestCaseMixin(object):
         return self.client.post(url, HTTP_ACCEPT='text/html')
 
     def post_ajax_html(self, url, data=None):
-        return self.client.post(url, data if data else {}, HTTP_ACCEPT='text/html', HTTP_X_REQUESTED_WITH='XMLHttpRequest')
+        return self.client.post(
+            url,
+            data or {},
+            HTTP_ACCEPT='text/html',
+            HTTP_X_REQUESTED_WITH='XMLHttpRequest',
+        )
 
     def post_ajax_json(self, url, data=None, client=None):
         client = client or self.client
-        return client.post(url, data if data else {}, HTTP_ACCEPT='text/json', HTTP_X_REQUESTED_WITH='XMLHttpRequest')
+        return client.post(
+            url,
+            data or {},
+            HTTP_ACCEPT='text/json',
+            HTTP_X_REQUESTED_WITH='XMLHttpRequest',
+        )
 
     def post_ajax_binary(self, url, data=None):
-        return self.client.post(url, data if data else '', HTTP_ACCEPT='text/json', HTTP_X_REQUESTED_WITH='XMLHttpRequest', content_type='application/octet-stream')
+        return self.client.post(
+            url,
+            data or '',
+            HTTP_ACCEPT='text/json',
+            HTTP_X_REQUESTED_WITH='XMLHttpRequest',
+            content_type='application/octet-stream',
+        )
 
     @make_request_decorator
     def make_request_html(self, url, meta={}):
@@ -309,7 +325,7 @@ class TestCaseMixin(object):
 
         client = client or self.client
 
-        return client.post(url, data if data else {}, **_meta)
+        return client.post(url, data or {}, **_meta)
 
     def request_login(self, email, password='111111', remember=False, client=None):
         data = {'email': email, 'password': password}

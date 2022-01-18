@@ -59,17 +59,11 @@ class ComplexChangeTask(PostponedLogic):
 
     @property
     def processed_data(self):
-        if self.message is None:
-            return {}
-
-        return {'message': self.message}
+        return {} if self.message is None else {'message': self.message}
 
     @property
     def error_message(self):
-        if self.message is None:
-            return self.state.text
-
-        return self.message
+        return self.state.text if self.message is None else self.message
 
     def logic_result(self, next_step=None, message=None):
         if next_step is None:
@@ -121,17 +115,6 @@ class ComplexChangeTask(PostponedLogic):
 
             processor.hero_actions(self.hero, data=self.data)
 
-            if result.is_SUCCESSED:
-                self.state = self.STATE.PROCESSED
-                return POSTPONED_TASK_LOGIC_RESULT.SUCCESS
-
-            if result.is_CONTINUE:
-                return POSTPONED_TASK_LOGIC_RESULT.CONTINUE
-
-            main_task.comment = 'unknown result %r' % result
-            self.state = self.STATE.CAN_NOT_PROCESS
-            return POSTPONED_TASK_LOGIC_RESULT.ERROR
-
         else:
             result, self.step, postsave_actions = processor.use(task=self,
                                                                 storage=storage)
@@ -148,13 +131,14 @@ class ComplexChangeTask(PostponedLogic):
                 self.state = self.STATE.CAN_NOT_PROCESS
                 return POSTPONED_TASK_LOGIC_RESULT.ERROR
 
-            if result.is_SUCCESSED:
-                self.state = self.STATE.PROCESSED
-                return POSTPONED_TASK_LOGIC_RESULT.SUCCESS
 
-            if result.is_CONTINUE:
-                return POSTPONED_TASK_LOGIC_RESULT.CONTINUE
+        if result.is_SUCCESSED:
+            self.state = self.STATE.PROCESSED
+            return POSTPONED_TASK_LOGIC_RESULT.SUCCESS
 
-            main_task.comment = 'unknown result %r' % result
-            self.state = self.STATE.CAN_NOT_PROCESS
-            return POSTPONED_TASK_LOGIC_RESULT.ERROR
+        if result.is_CONTINUE:
+            return POSTPONED_TASK_LOGIC_RESULT.CONTINUE
+
+        main_task.comment = 'unknown result %r' % result
+        self.state = self.STATE.CAN_NOT_PROCESS
+        return POSTPONED_TASK_LOGIC_RESULT.ERROR

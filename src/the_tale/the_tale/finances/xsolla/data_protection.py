@@ -5,21 +5,26 @@ smart_imports.all()
 
 
 def collect_data(account_id):
-    data = []
-
-    for invoice in models.Invoice.objects.filter(bank_id=account_id):
-        data.append(('xsolla_invoice', {'created_at': invoice.created_at,
-                                        'updated_at': invoice.updated_at,
-                                        'state': invoice.state,
-                                        'xsolla': {'id': invoice.xsolla_id,
-                                                   'v1': invoice.xsolla_v1,
-                                                   'v2': invoice.xsolla_v2,
-                                                   'v3': invoice.xsolla_v3},
-                                        'comment': invoice.comment,
-                                        'pay_result': invoice.pay_result,
-                                        'date': invoice.date}))
-
-    return data
+    return [
+        (
+            'xsolla_invoice',
+            {
+                'created_at': invoice.created_at,
+                'updated_at': invoice.updated_at,
+                'state': invoice.state,
+                'xsolla': {
+                    'id': invoice.xsolla_id,
+                    'v1': invoice.xsolla_v1,
+                    'v2': invoice.xsolla_v2,
+                    'v3': invoice.xsolla_v3,
+                },
+                'comment': invoice.comment,
+                'pay_result': invoice.pay_result,
+                'date': invoice.date,
+            },
+        )
+        for invoice in models.Invoice.objects.filter(bank_id=account_id)
+    ]
 
 
 def remove_data(account_id, v1_filler=None):

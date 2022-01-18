@@ -44,10 +44,8 @@ class Client(client.Client):
                                          data=tt_protocol_bank_pb2.AccountsBalancesRequest(accounts_ids=tuple(accounts_ids)),
                                          AnswerType=tt_protocol_bank_pb2.AccountsBalancesResponse)
 
-        result = {account_id: dict(balances.amounts)
+        return {account_id: dict(balances.amounts)
                   for account_id, balances in answer.balances.items()}
-
-        return result
 
     def cmd_balance(self, account_id, currency=None):
         if isinstance(currency, int):

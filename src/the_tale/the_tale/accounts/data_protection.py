@@ -36,16 +36,16 @@ def postprocess_value(value):
 
 
 def collect_account_data(account_id):
-    data = []
-
     account = prototypes.AccountPrototype.get_by_id(account_id)
 
-    data.append(('nick', account.nick_verbose))
-    data.append(('description', account.description))
-    data.append(('last_news_remind_time', account.last_news_remind_time))
-    data.append(('gender', account.gender))
+    data = [
+        ('nick', account.nick_verbose),
+        ('description', account.description),
+        ('last_news_remind_time', account.last_news_remind_time),
+        ('gender', account.gender),
+        ('infinit_subscription', account.is_premium_infinit),
+    ]
 
-    data.append(('infinit_subscription', account.is_premium_infinit))
     if not account.is_premium_infinit:
         data.append(('subscription_end_at', account.premium_end_at))
 
@@ -75,40 +75,53 @@ def collect_account_data(account_id):
 
 
 def collect_might_data(account_id):
-    data = []
-
-    for award in models.Award.objects.filter(account=account_id):
-        data.append(('mights', {'type': award.type,
-                                'description': award.description,
-                                'created_at': award.created_at,
-                                'updated_at': award.updated_at}))
-
-    return data
+    return [
+        (
+            'mights',
+            {
+                'type': award.type,
+                'description': award.description,
+                'created_at': award.created_at,
+                'updated_at': award.updated_at,
+            },
+        )
+        for award in models.Award.objects.filter(account=account_id)
+    ]
 
 
 def collect_reset_password_data(account_id):
-    data = []
-
-    for reset_task in models.ResetPasswordTask.objects.filter(account=account_id):
-        data.append(('reset_password', {'created_at': reset_task.created_at,
-                                        'is_processed': reset_task.is_processed}))
-
-    return data
+    return [
+        (
+            'reset_password',
+            {
+                'created_at': reset_task.created_at,
+                'is_processed': reset_task.is_processed,
+            },
+        )
+        for reset_task in models.ResetPasswordTask.objects.filter(
+            account=account_id
+        )
+    ]
 
 
 def collect_change_credentials_data(account_id):
-    data = []
-
-    for change_task in models.ChangeCredentialsTask.objects.filter(account=account_id):
-        data.append(('change_credentials', {'created_at': change_task.created_at,
-                                            'updated_at': change_task.updated_at,
-                                            'state': change_task.state,
-                                            'comment': change_task.comment,
-                                            'old_email': change_task.old_email,
-                                            'new_email': change_task.new_email,
-                                            'new_nick': change_task.new_nick}))
-
-    return data
+    return [
+        (
+            'change_credentials',
+            {
+                'created_at': change_task.created_at,
+                'updated_at': change_task.updated_at,
+                'state': change_task.state,
+                'comment': change_task.comment,
+                'old_email': change_task.old_email,
+                'new_email': change_task.new_email,
+                'new_nick': change_task.new_nick,
+            },
+        )
+        for change_task in models.ChangeCredentialsTask.objects.filter(
+            account=account_id
+        )
+    ]
 
 
 def collect_full_data(account_id):

@@ -1342,7 +1342,7 @@ class ChangeRoleRequestsTests(BaseMembershipRequestsTests):
     def test_fighters_limit(self):
         attributes = logic.load_attributes(self.clan.id)
 
-        for i in range(attributes.fighters_maximum):
+        for _ in range(attributes.fighters_maximum):
             account = self.accounts_factory.create_account()
             logic._add_member(clan=self.clan,
                               account=account,
@@ -1428,7 +1428,7 @@ class ChangeOwnershipTests(BaseMembershipRequestsTests):
     def test_fighters_limit(self):
         self.unfreeze_member(self.account_2.id)
 
-        for i in range(clans_logic.load_attributes(self.clan.id).fighters_maximum - 1):
+        for _ in range(clans_logic.load_attributes(self.clan.id).fighters_maximum - 1):
             clans_logic._add_member(clan=self.clan,
                                     account=self.accounts_factory.create_account(),
                                     role=clans_relations.MEMBER_ROLE.COMANDOR)

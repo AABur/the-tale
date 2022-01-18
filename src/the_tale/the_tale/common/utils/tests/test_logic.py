@@ -17,7 +17,7 @@ class LogicTests(testcase.TestCase):
                    ('b', 10),
                    ('c', 100)]
 
-        counter.update([logic.random_value_by_priority(choices) for i in range(10000)])
+        counter.update([logic.random_value_by_priority(choices) for _ in range(10000)])
 
         self.assertTrue(counter['0'] == 0)
         self.assertTrue(counter['a'])
@@ -34,7 +34,7 @@ class LogicTests(testcase.TestCase):
                    ('b', 10),
                    ('c', 100)]
 
-        for i in range(10000):
+        for _ in range(10000):
             for j, value in enumerate(logic.shuffle_values_by_priority(choices)):
                 counter.update([(value, j)])
 
@@ -51,7 +51,10 @@ class LogicTests(testcase.TestCase):
         self.assertEqual('5 дней', logic.verbose_timedelta(datetime.timedelta(days=5)))
         self.assertEqual('5 дней', logic.verbose_timedelta(datetime.timedelta(seconds=5 * 24 * 60 * 60)))
 
-        self.assertEqual('1 час', logic.verbose_timedelta(datetime.timedelta(seconds=60 * 60)))
+        self.assertEqual(
+            '1 час', logic.verbose_timedelta(datetime.timedelta(seconds=60 ** 2))
+        )
+
         self.assertEqual('2 часа', logic.verbose_timedelta(datetime.timedelta(seconds=2 * 60 * 60)))
         self.assertEqual('23 часа', logic.verbose_timedelta(datetime.timedelta(seconds=23 * 60 * 60)))
         self.assertEqual('4 часа', logic.verbose_timedelta(datetime.timedelta(seconds=4 * 60 * 60)))
@@ -156,7 +159,7 @@ class LogicTests(testcase.TestCase):
         set_2 = set()
         set_3 = set()
 
-        for i in range(1000):
+        for _ in range(1000):
             set_2.add(logic.randint_from_1(2))
             set_3.add(logic.randint_from_1(3))
 

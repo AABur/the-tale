@@ -178,10 +178,7 @@ class JsonField(TextField):
 
     def prepare_value(self, value):
 
-        if not value:
-            return ''
-
-        return s11n.to_json(value)
+        return '' if not value else s11n.to_json(value)
 
 
 @pgf

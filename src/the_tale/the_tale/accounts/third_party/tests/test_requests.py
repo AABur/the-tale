@@ -447,5 +447,12 @@ class RemoveAllRequestsTests(BaseRequestsTests):
         self.assertEqual(cache_delete.call_count, 3)
 
         self.assertEqual(prototypes.AccessTokenPrototype.get_list_by_account_id(self.account_1.id), [])
-        self.assertEqual(set(t.id for t in prototypes.AccessTokenPrototype.get_list_by_account_id(self.account_2.id)),
-                         {self.token_x.id})
+        self.assertEqual(
+            {
+                t.id
+                for t in prototypes.AccessTokenPrototype.get_list_by_account_id(
+                    self.account_2.id
+                )
+            },
+            {self.token_x.id},
+        )

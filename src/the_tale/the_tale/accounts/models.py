@@ -9,7 +9,7 @@ class AccountManager(django_auth_models.BaseUserManager):
     @classmethod
     def normalize_email(cls, email):
         email = super(AccountManager, cls).normalize_email(email)
-        return email if email else None
+        return email or None
 
     def create_user(self, nick, email, is_fast=None, password=None, active_end_at=None, referer=None, referer_domain=None, referral_of=None, action_id=None, is_bot=False, gender=game_relations.GENDER.MALE):
 

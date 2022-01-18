@@ -10,7 +10,7 @@ class AchievementsContainer(object):
 
     def __init__(self, achievements=None):
         self.updated = False
-        self.achievements = achievements if achievements else {}
+        self.achievements = achievements or {}
 
     def serialize(self):
         return {'achievements': list(self.achievements.items())}
